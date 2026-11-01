@@ -32,3 +32,8 @@ Todo es gratis: voz con Kokoro (open source), animación con PIL/numpy, música 
 - Español neutro (tú). Datos verificados con fuente y fecha. Nada de rumores ni copias de otros creadores.
 - Pulso IA: noticias, historias reales, datos y curiosidades de IA; gancho en los primeros 15 s; 8:30–10:30.
 - Peque Planeta: educativo para 2 a 6 años (números, colores, formas, animales, letras, cuentos), con pausas para que el niño responda; mínimo 8:00; cada episodio distinto de verdad (YouTube castiga el contenido infantil repetitivo).
+
+## Ritmo y tope gratis (Zapier free: 100 tareas/mes, 2 por subida = 50 subidas/mes)
+- Por canal, según el día del mes D y R = D % 6: R ∈ {1,3,5} → video largo · R ∈ {2,4} → Short · R = 0 → descanso.
+- Tope: 25 subidas automáticas por canal y por mes (23 en 2026-11), contadas en `historial.md` (líneas marcadas "auto"). Si se llega al tope, ese día no se publica.
+- Una sola llamada exitosa a Zapier por ejecución (la subida). Sin llamadas de verificación.
