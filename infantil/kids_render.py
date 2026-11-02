@@ -473,7 +473,11 @@ def draw_frame(L, scen, t):
         if q_on(b, t): qmark(d, L, t)
         if rev:
             k, s, p, cs, cp = OBJS[n]; cw = cp if n != 1 else cs
+            if len(b["args"]) > 1: cw = b["args"][1]   # texto opcional: ("scene", "colors", n, "ROJO")
             colc = {1: COL["yellow"], 4: COL["green"], 7: COL["cyan"], 8: COL["blue"]}.get(n, COL["yellow"])
+            for pref, cn in (("amarill", "yellow"), ("verde", "green"), ("roj", "red"), ("azul", "blue"), ("celest", "cyan"),
+                             ("morad", "purple"), ("rosad", "pink"), ("naranj", "orange")):
+                if cw.lower().strip("¡! ").startswith(pref): colc = COL[cn]
             banner(d, L, cw.upper(), t - b["reveal"], size=130, col=colc)
     elif kind == "bye":
         banner(d, L, "¡ADIÓS!", bt, size=160, col=COL["orange"])
