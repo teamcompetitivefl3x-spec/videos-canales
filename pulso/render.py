@@ -28,7 +28,8 @@ def build_short(idx):
     end_t = t + 0.5
     total = end_t + 3.2
     scenes = [dict(sc) for sc in SCENES if int(sc["at"]) in sents]
-    scenes.append(dict(at=None, start=end_t, type="end", text="Historia completa en el *canal*", button="VER VIDEO", btn_at=0.5))
+    scenes.append(dict(at=None, start=end_t, type="end", text=spec.get("end_text", "Historia completa en el *canal*"),
+                       button=spec.get("end_button", "VER VIDEO"), btn_at=0.5))
     return W, H, times, total, scenes, spec, sents
 
 def tm(times, at):
@@ -115,6 +116,7 @@ def main():
             f = E.fit("black", 64, spec["title"], W - 180)
             d.text((W / 2, 195), spec["title"], font=f, fill=E.rgba(E.C["accent"]), anchor="mm")
             d.rectangle([0, 0, W * (t / total), 10], fill=E.rgba(E.C["accent"]))
+            d.text((W / 2, 74), "PULSO IA", font=E.font("b", 30), fill=E.rgba(E.C["muted"], 170), anchor="mm")
         while ji + 1 < len(subs) and subs[ji + 1][0] <= t: ji += 1
         if subs and subs[ji][0] <= t < subs[ji][1] + 0.15 and sc["type"] != "chapter":
             E.draw_sub(ctx, T, subs[ji][2])
