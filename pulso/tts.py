@@ -17,6 +17,10 @@ PRON = [
     (r"\bIA\b", "i a"), (r"\bWhatsApp\b", "Guatsap"), (r"\bUber\b", "Úber"),
     (r"Siemiatkowski", "Shemiatkovski"), (r"Gergely Orosz", "Guérguei Orosh"),
     (r"\bBloomberg\b", "Blúmberg"), (r"\bCEO\b", "director general"),
+    (r"\bWashington Post\b", "Guáshinton Post"), (r"\bRiverside\b", "Ríversaid"),
+    (r"\bEpoch AI\b", "Épok Ei Ai"), (r"\bAltman\b", "Áltman"), (r"\bGemini\b", "Yémini"),
+    (r"\bMIT Technology Review\b", "Em Ai Ti Teknólogi Riviú"), (r"\bGPT-4\b", "yi pi ti cuatro"),
+    (r"\bShaolei Ren\b", "Shaolei Ren"), (r"\bstreaming\b", "estríming"), (r"\bGoogle\b", "Gúgol"),
     (r"«|»|\"", ""),
 ]
 

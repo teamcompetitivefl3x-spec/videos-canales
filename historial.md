@@ -8,3 +8,4 @@ fecha · canal · título · ID de YouTube
 2026-11-02 · Peque Planeta · auto · short · ¿De qué color es? 🎈 Juego de colores con Tula y Pipo #shorts · RsFMg5CmuLc
 2026-11-02 · Pulso IA · auto · short · 50 IA intentaron crear una civilización en Minecraft… y crearon burocracia #shorts · jgKbhZlBOv8
 2026-11-03 · Peque Planeta · auto · largo · ¡Aprendemos las formas con Tula y Pipo! 🔺 Círculo, cuadrado, triángulo, estrella y corazón · WJsAj6QwDhw
+2026-11-03 · Pulso IA · auto · largo · ¿Cuánta agua y energía gasta de verdad preguntarle algo a la IA? Los números reales · DNSWf3aYgOc

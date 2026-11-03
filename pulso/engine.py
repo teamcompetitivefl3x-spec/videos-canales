@@ -178,6 +178,16 @@ def icon(d, kind, cx, cy, r, col=None, a=255):
         d.line(pts, fill=col, width=int(r * 0.16), joint="curve")
         d.polygon([(cx + r * 1.1, cy + r * 0.85), (cx + r * 0.55, cy + r * 0.75), (cx + r * 1.0, cy + r * 0.3)], fill=col)
 
+    elif kind == "drop":
+        pts = []
+        for k in range(73):
+            th = 2 * math.pi * k / 72
+            pts.append((cx + r * 0.82 * math.sin(th) * math.sin(th / 2), cy - r * 1.05 * math.cos(th) * 1.0 + r * 0.1))
+        d.polygon(pts, fill=col)
+        d.ellipse([cx - r * 0.42, cy + r * 0.2, cx - r * 0.2, cy + r * 0.55], fill=rgba(C["text"], a * 0.6))
+    elif kind == "bolt":
+        d.polygon([(cx + r * 0.25, cy - r * 1.1), (cx - r * 0.65, cy + r * 0.15), (cx - r * 0.02, cy + r * 0.15),
+                   (cx - r * 0.3, cy + r * 1.1), (cx + r * 0.65, cy - r * 0.2), (cx + r * 0.02, cy - r * 0.2)], fill=col)
 
 # ---------- escenas ----------
 class Ctx:
