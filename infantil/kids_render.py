@@ -9,6 +9,8 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter
 FPS = 25
 TL = json.load(open("kids_timeline.json")); EV = TL["events"]; TOTAL = TL["duration"]
 from script import OBJS, WORDS
+import script as _SC
+TITLE = getattr(_SC, "TITLE", ("¡CONTAMOS", "DEL 1 AL 10!"))   # título del episodio (2 líneas)
 FD = "/usr/share/fonts/opentype/inter/"
 _fc = {}
 def font(size, w="InterDisplay-Black.otf"):
@@ -35,11 +37,14 @@ def build_blocks():
         for a in e["do"]:
             if a[0] == "scene":
                 cur = dict(kind=a[1], args=list(a[2:]), start=e["start"], pops=[], numeral=None, q=[], rpops=[],
-                           confetti=None, cd=[], launch=None, sa=None, sb=None, sc=None, reveal=None, popall=None, dancing=None, fill=None)
+                           confetti=None, cd=[], launch=None, sa=None, sb=None, sc=None, reveal=None, popall=None, dancing=None, fill=None,
+                           trace=None, sides=[])
                 blocks.append(cur)
             elif cur is not None:
                 k = a[0]; t = e["start"]
                 if k == "pop": cur["pops"].append((a[1], t))
+                elif k == "side": cur["sides"].append((a[1], t))
+                elif k == "trace": cur["trace"] = t
                 elif k == "numeral": cur["numeral"] = (a[1], t)
                 elif k == "qmark": cur["q"].append((a[1], t))
                 elif k == "rpop": cur["rpops"].append((a[1], t))
@@ -84,12 +89,132 @@ def heart(d, cx, cy, r, col):
     d.ellipse([cx, cy - r * 0.8, cx + r, cy + r * 0.2], fill=col)
     d.polygon([(cx - r * 0.97, cy - r * 0.15), (cx + r * 0.97, cy - r * 0.15), (cx, cy + r * 1.0)], fill=col)
 
-def obj_sprite(kind, size=220, color=None, gray=False):
+# ---------- formas geométricas (episodio de formas) ----------
+SHAPES = ("circulo", "cuadrado", "triangulo", "estrellaf", "corazonf")
+SHAPE_NAME = {"circulo": "CÍRCULO", "cuadrado": "CUADRADO", "triangulo": "TRIÁNGULO", "estrellaf": "ESTRELLA", "corazonf": "CORAZÓN"}
+SHAPE_COL = {"circulo": "red", "cuadrado": "blue", "triangulo": "green", "estrellaf": "yellow", "corazonf": "pink"}
+FACE_DY = {"triangulo": 0.25, "corazonf": -0.05, "estrellaf": 0.08}
+
+def shape_verts(kind, cx, cy, r):
+    """Vértices (lados/puntas) de la forma; None si es curva."""
+    if kind == "cuadrado":
+        h = r * 0.86; return [(cx - h, cy - h), (cx + h, cy - h), (cx + h, cy + h), (cx - h, cy + h)]
+    if kind == "triangulo":
+        return [(cx, cy - r * 1.05), (cx + r * 1.05, cy + r * 0.78), (cx - r * 1.05, cy + r * 0.78)]
+    if kind == "estrellaf":
+        return star_pts(cx, cy + r * 0.08, r * 1.12, r * 0.48)
+    return None
+
+def shape_pts(kind, cx, cy, r, dense=96):
+    """Contorno cerrado de la forma (lista de puntos), empezando arriba y en sentido horario."""
+    if kind == "circulo":
+        return [(cx + r * math.cos(math.radians(-90 + 360 * i / dense)), cy + r * math.sin(math.radians(-90 + 360 * i / dense))) for i in range(dense)]
+    if kind == "corazonf":
+        pts = []
+        for i in range(dense):
+            a = 2 * math.pi * i / dense
+            x = 16 * math.sin(a) ** 3; y = 13 * math.cos(a) - 5 * math.cos(2 * a) - 2 * math.cos(3 * a) - math.cos(4 * a)
+            pts.append((cx + r * x / 15.5, cy - r * y / 15.5 - r * 0.12))
+        return pts
+    v = shape_verts(kind, cx, cy, r); pts = []
+    per = max(2, dense // len(v))
+    for i in range(len(v)):
+        (x0, y0), (x1, y1) = v[i], v[(i + 1) % len(v)]
+        for k in range(per): pts.append((x0 + (x1 - x0) * k / per, y0 + (y1 - y0) * k / per))
+    return pts
+
+def partial_path(pts, p):
+    """Primer tramo (fracción p del perímetro) del contorno cerrado."""
+    loop = pts + [pts[0]]; seg = [math.dist(loop[i], loop[i + 1]) for i in range(len(loop) - 1)]
+    tot = sum(seg); goal = tot * clamp(p); out = [loop[0]]; acc = 0
+    for i, s in enumerate(seg):
+        if acc + s >= goal:
+            k = (goal - acc) / s if s else 0
+            out.append((loop[i][0] + (loop[i + 1][0] - loop[i][0]) * k, loop[i][1] + (loop[i + 1][1] - loop[i][1]) * k)); break
+        out.append(loop[i + 1]); acc += s
+    return out
+
+def shape_face(d, kind, c, r, S):
+    fy = c + r * FACE_DY.get(kind, 0.0); ew = r * 0.13
+    for ex in (-0.3, 0.3):
+        d.ellipse([c + r * ex - ew, fy - r * 0.2 - ew * 1.2, c + r * ex + ew, fy - r * 0.2 + ew * 1.2], fill=(255, 255, 255))
+        d.ellipse([c + r * ex - ew * 0.6, fy - r * 0.15 - ew * 0.7, c + r * ex + ew * 0.6, fy - r * 0.15 + ew * 0.7], fill=COL["dark"])
+        d.ellipse([c + r * ex - ew * 0.25, fy - r * 0.22 - ew * 0.3, c + r * ex + ew * 0.1, fy - r * 0.22], fill=(255, 255, 255))
+    d.arc([c - r * 0.25, fy - r * 0.1, c + r * 0.25, fy + r * 0.28], 20, 160, fill=COL["dark"], width=int(r * 0.07))
+    for ex in (-0.5, 0.5):
+        d.ellipse([c + r * ex - r * 0.11, fy + r * 0.02, c + r * ex + r * 0.11, fy + r * 0.14], fill=(255, 150, 170, 170))
+
+def obj_sprite(kind, size=220, color=None, gray=False, face=False):
     S = 4; W = size * S; im = Image.new("RGBA", (W, W), (0, 0, 0, 0)); d = ImageDraw.Draw(im)
     c = W / 2; r = W * 0.36
     def C(name): return (205, 205, 215) if gray else (color or COL[name])
     ol = (0, 0, 0, 0)
-    if kind == "sol":
+    if kind in SHAPES:
+        rr = r * 1.08; pts = shape_pts(kind, c, c, rr, 160)
+        d.polygon(pts, fill=C(SHAPE_COL[kind]))
+        d.line(pts + [pts[0], pts[1]], fill=(255, 255, 255), width=int(W * 0.035), joint="curve")
+        if kind == "circulo": d.arc([c - rr * 0.72, c - rr * 0.72, c + rr * 0.72, c + rr * 0.72], 200, 250, fill=(255, 255, 255, 150), width=int(W * 0.03))
+        if face: shape_face(d, kind, c, rr, S)
+    elif kind == "regalo":
+        d.rectangle([c - r * 0.95, c - r * 0.55, c + r * 0.95, c + r * 1.2], fill=C("red"))
+        d.rectangle([c - r * 1.05, c - r * 0.8, c + r * 1.05, c - r * 0.45], fill=(220, 50, 60))
+        d.rectangle([c - r * 0.15, c - r * 0.8, c + r * 0.15, c + r * 1.2], fill=COL["yellow"])
+        for sx in (-1, 1):
+            d.ellipse([c + sx * r * 0.05 - r * 0.45 + (sx > 0) * r * 0.4, c - r * 1.25, c + sx * r * 0.05 + (sx > 0) * r * 0.4 - r * 0.05, c - r * 0.8], outline=COL["yellow"], width=int(W * 0.03))
+    elif kind == "ventana":
+        d.rectangle([c - r * 1.05, c - r * 1.05, c + r * 1.05, c + r * 1.05], fill=(255, 255, 255))
+        d.rectangle([c - r * 0.88, c - r * 0.88, c + r * 0.88, c + r * 0.88], fill=C("cyan"))
+        d.rectangle([c - r * 0.06, c - r * 0.9, c + r * 0.06, c + r * 0.9], fill=(255, 255, 255))
+        d.rectangle([c - r * 0.9, c - r * 0.06, c + r * 0.9, c + r * 0.06], fill=(255, 255, 255))
+        d.line([(c - r * 0.7, c - r * 0.2), (c - r * 0.25, c - r * 0.65)], fill=(255, 255, 255, 170), width=int(W * 0.025))
+    elif kind == "bloque":
+        d.rounded_rectangle([c - r, c - r, c + r, c + r], radius=int(r * 0.12), fill=C("orange"))
+        d.rounded_rectangle([c - r * 0.7, c - r * 0.7, c + r * 0.7, c + r * 0.7], radius=int(r * 0.1), fill=(255, 190, 100))
+        heart(d, c, c + r * 0.05, r * 0.38, COL["red"])
+    elif kind == "gorro":
+        d.polygon([(c, c - r * 1.15), (c + r * 0.85, c + r * 1.0), (c - r * 0.85, c + r * 1.0)], fill=C("purple"))
+        for (x, y) in ((-0.15, -0.3), (0.2, 0.2), (-0.35, 0.55), (0.45, 0.75), (0.0, 0.7)):
+            d.ellipse([c + r * x - r * 0.09, c + r * y - r * 0.09, c + r * x + r * 0.09, c + r * y + r * 0.09], fill=COL["yellow"])
+        d.rounded_rectangle([c - r * 0.95, c + r * 0.92, c + r * 0.95, c + r * 1.15], radius=int(r * 0.1), fill=COL["pink"])
+        d.ellipse([c - r * 0.2, c - r * 1.38, c + r * 0.2, c - r * 0.98], fill=COL["yellow"])
+    elif kind == "sandia":
+        d.polygon([(c - r * 1.1, c - r * 0.75), (c + r * 1.1, c - r * 0.75), (c, c + r * 1.2)], fill=(60, 160, 60))
+        d.polygon([(c - r * 0.92, c - r * 0.6), (c + r * 0.92, c - r * 0.6), (c, c + r * 1.0)], fill=(235, 60, 80))
+        d.rectangle([c - r * 1.1, c - r * 0.75, c + r * 1.1, c - r * 0.62], fill=(160, 220, 120))
+        for (x, y) in ((-0.4, -0.3), (0.0, -0.2), (0.4, -0.3), (-0.15, 0.2), (0.18, 0.25), (0.0, 0.6)):
+            d.ellipse([c + r * x - r * 0.05, c + r * y - r * 0.08, c + r * x + r * 0.05, c + r * y + r * 0.08], fill=COL["dark"])
+    elif kind == "barco":
+        d.polygon([(c - r * 1.1, c + r * 0.6), (c + r * 1.1, c + r * 0.6), (c + r * 0.75, c + r * 1.1), (c - r * 0.75, c + r * 1.1)], fill=COL["brown"])
+        d.rectangle([c - r * 0.04, c - r * 1.2, c + r * 0.04, c + r * 0.6], fill=(110, 70, 40))
+        d.polygon([(c + r * 0.08, c - r * 1.15), (c + r * 0.95, c + r * 0.45), (c + r * 0.08, c + r * 0.45)], fill=C("red"))
+        d.polygon([(c - r * 0.08, c - r * 0.85), (c - r * 0.08, c + r * 0.45), (c - r * 0.75, c + r * 0.45)], fill=(255, 255, 255))
+    elif kind == "estrellamar":
+        pts = star_pts(c, c + r * 0.05, r * 1.15, r * 0.6)
+        d.polygon(pts, fill=C("orange"))
+        d.line(pts + [pts[0], pts[1]], fill=(240, 110, 30), width=int(W * 0.025), joint="curve")
+        for i in range(5):
+            a = math.radians(-90 + i * 72)
+            for k in (0.35, 0.65):
+                x, y = c + r * k * math.cos(a), c + r * 0.05 + r * k * math.sin(a)
+                d.ellipse([x - r * 0.06, y - r * 0.06, x + r * 0.06, y + r * 0.06], fill=(255, 220, 150))
+    elif kind == "varita":
+        d.line([(c - r * 0.8, c + r * 1.2), (c + r * 0.2, c - r * 0.1)], fill=(150, 90, 200), width=int(W * 0.04))
+        d.polygon(star_pts(c + r * 0.35, c - r * 0.35, r * 0.8, r * 0.34), fill=C("yellow"))
+        for (x, y, s) in ((0.95, -1.0, 0.12), (-0.3, -0.95, 0.09), (1.1, 0.25, 0.08)):
+            d.polygon(star_pts(c + r * x, c + r * y, r * s * 1.6, r * s * 0.5, n=4), fill=COL["yellow"])
+    elif kind == "globoc":
+        d.line([(c, c + r * 0.8), (c - r * 0.18, c + r * 1.2), (c + r * 0.12, c + r * 1.6)], fill=(110, 110, 125), width=int(W * 0.018))
+        d.polygon([(c - r * 0.12, c + r * 0.9), (c + r * 0.12, c + r * 0.9), (c, c + r * 0.72)], fill=C("purple"))
+        heart(d, c, c - r * 0.3, r * 0.95, C("purple"))
+        d.ellipse([c - r * 0.6, c - r * 0.9, c - r * 0.35, c - r * 0.65], fill=(255, 255, 255, 150))
+    elif kind == "galleta":
+        heart(d, c, c, r * 1.1, C("orange") if color else (215, 160, 90))
+        heart(d, c, c + r * 0.02, r * 0.82, COL["pink"])
+        rn = random.Random(3)
+        for _ in range(12):
+            x, y = c + rn.uniform(-0.45, 0.45) * r, c + rn.uniform(-0.45, 0.35) * r
+            d.ellipse([x - r * 0.04, y - r * 0.04, x + r * 0.04, y + r * 0.04], fill=rn.choice([COL["yellow"], COL["cyan"], (255, 255, 255)]))
+    elif kind == "sol":
         for i in range(12):
             a = math.radians(i * 30)
             d.polygon([(c + r * 1.05 * math.cos(a - 0.12), c + r * 1.05 * math.sin(a - 0.12)), (c + r * 1.38 * math.cos(a), c + r * 1.38 * math.sin(a)),
@@ -146,9 +271,9 @@ def obj_sprite(kind, size=220, color=None, gray=False):
 KIND = {n: OBJS[n][0] for n in OBJS}
 KIND_NAMES = {"sol", "pez", "globo", "manzana", "estrella", "flor", "burbuja", "pelota", "nube", "corazon"}
 _sp = {}
-def sprite(kind, size, color=None, gray=False):
-    k = (kind, size, color, gray)
-    if k not in _sp: _sp[k] = obj_sprite(kind, size, color, gray)
+def sprite(kind, size, color=None, gray=False, face=False):
+    k = (kind, size, color, gray, face)
+    if k not in _sp: _sp[k] = obj_sprite(kind, size, color, gray, face)
     return _sp[k]
 
 # ---------- personajes ----------
@@ -346,10 +471,10 @@ def draw_frame(L, scen, t):
     im = scen.frame(t, night); d = ImageDraw.Draw(im)
     who, env = speaking(t)
     danc = 1.0 if (kind == "dance" and b["dancing"] and t >= b["dancing"]) or kind in ("title", "end") else 0.0
-    if kind == "review" and b["confetti"] and t >= b["confetti"]: danc = 1.0
+    if kind in ("review", "sreview") and b["confetti"] and t >= b["confetti"]: danc = 1.0
     # ----- contenido -----
     if kind == "title" or kind == "end":
-        txt1, txt2 = ("¡CONTAMOS", "DEL 1 AL 10!") if kind == "title" else ("¡HASTA LA", "PRÓXIMA!")
+        txt1, txt2 = TITLE if kind == "title" else ("¡HASTA LA", "PRÓXIMA!")
         p = elastic(bt / 0.8)
         cy = L.H * (0.24 if not L.v else 0.2)
         fs = (140 if not L.v else 112) * p
@@ -367,6 +492,7 @@ def draw_frame(L, scen, t):
     elif kind in ("count", "quiz"):
         n = b["args"][0]; ok = KIND[n] if kind == "count" else b["args"][1]
         size = 300 if n <= 4 else 240 if n <= 8 else 210
+        if ok in SHAPES: size = int(size * 0.8)
         if L.v: size = int(size * 0.85)
         spr = sprite(ok, size, color=(RAINBOW[0] if ok == "corazon" else None))
         pos = grid_positions(n, L.stage, size)
@@ -479,6 +605,95 @@ def draw_frame(L, scen, t):
                              ("morad", "purple"), ("rosad", "pink"), ("naranj", "orange")):
                 if cw.lower().strip("¡! ").startswith(pref): colc = COL[cn]
             banner(d, L, cw.upper(), t - b["reveal"], size=130, col=colc)
+    elif kind == "card":   # cartel de sección: ("scene", "card", "TEXTO", "color")
+        txt = b["args"][0]; cn = b["args"][1] if len(b["args"]) > 1 else "yellow"
+        big = 150 if len(txt) <= 11 else (115 if len(txt) <= 17 else 96) if not L.v else (80 if len(txt) <= 17 else 66)
+        banner(d, L, txt, bt, y=L.H * (0.30 if not L.v else 0.27), size=big, col=COL[cn])
+    elif kind == "shape":  # forma grande que se dibuja: trace -> fill (cara) -> reveal (nombre) -> side i (lados/puntas)
+        sk = b["args"][0]; cx = (L.stage[0] + L.stage[2]) / 2; cy = (L.stage[1] + L.stage[3]) / 2 + (40 if not L.v else 60)
+        R = 225 if not L.v else 250; col = COL[SHAPE_COL[sk]]
+        pts = shape_pts(sk, cx, cy, R, 240)
+        filled = b["fill"] is not None and t >= b["fill"]
+        if not filled:
+            for k in range(0, len(pts), 6):
+                x, y = pts[k]; d.ellipse([x - 6, y - 6, x + 6, y + 6], fill=(255, 255, 255))
+            if b["trace"] is not None and t >= b["trace"]:
+                p = clamp((t - b["trace"]) / 3.2); pp = partial_path(pts, p)
+                if len(pp) > 1:
+                    d.line(pp, fill=COL["dark"], width=24, joint="curve"); d.line(pp, fill=col, width=16, joint="curve")
+                x, y = pp[-1]
+                if p < 1:
+                    d.polygon(star_pts(x, y, 34 + 6 * math.sin(t * 20), 14), fill=COL["yellow"], outline=COL["dark"])
+        else:
+            paste_c(im, sprite(sk, int(R / 0.389), face=True), cx, cy, elastic((t - b["fill"]) / 0.5))
+            v = shape_verts(sk, cx, cy, R)
+            for i, tt in b["sides"]:
+                if t < tt or not v: continue
+                p = ease((t - tt) / 0.35)
+                if sk == "estrellaf":
+                    x, y = v[2 * (i - 1)]; dx, dy = x - cx, y - cy; m = math.hypot(dx, dy) or 1
+                    d.ellipse([x - 22, y - 22, x + 22, y + 22], fill=COL["yellow"], outline=COL["dark"], width=4)
+                    badge(d, x + dx / m * 62, y + dy / m * 62, str(i), r=int(34 * p) + 1)
+                else:
+                    a, c2 = v[i - 1], v[i % len(v)]
+                    e2 = (a[0] + (c2[0] - a[0]) * p, a[1] + (c2[1] - a[1]) * p)
+                    d.line([a, e2], fill=COL["dark"], width=26); d.line([a, e2], fill=COL["yellow"], width=16)
+                    mx, my = (a[0] + c2[0]) / 2, (a[1] + c2[1]) / 2; dx, dy = mx - cx, my - cy; m = math.hypot(dx, dy) or 1
+                    badge(d, mx + dx / m * 62, my + dy / m * 62, str(i), r=int(34 * p) + 1)
+        if q_on(b, t): qmark(d, L, t)
+        elif b["reveal"] is not None and t >= b["reveal"]:
+            banner(d, L, SHAPE_NAME[sk], t - b["reveal"], size=120, col=col)
+    elif kind == "world":  # cosas del mundo con esa forma: ("scene", "world", forma, [obj1, obj2, obj3]) + pop i
+        sk, objs = b["args"]; size = 270 if not L.v else 250
+        pos = grid_positions(len(objs), (L.stage[0], L.stage[1] + 60, L.stage[2], L.stage[3] + 20), size)
+        banner(d, L, SHAPE_NAME[sk], bt, size=110, col=COL[SHAPE_COL[sk]])
+        shown = dict(b["pops"])
+        for i, (x, y) in enumerate(pos, 1):
+            if i in shown and t >= shown[i]:
+                wob = math.sin(t * 2.5 + i) * 5
+                paste_c(im, sprite(objs[i - 1], size), x, y + wob, elastic((t - shown[i]) / 0.45), math.sin(t * 2 + i) * 3)
+            elif bt > 0.5:
+                paste_c(im, sprite(sk, int(size * 0.62), gray=True), x, y, 1.0, 0, alpha=0.45)
+    elif kind == "sshow":  # ¿qué forma es? / ¿de qué color es?: ("scene", "sshow", forma, color, texto|None)
+        sk, cn = b["args"][0], b["args"][1]; txt = b["args"][2] if len(b["args"]) > 2 else None
+        cx = (L.stage[0] + L.stage[2]) / 2; cy = (L.stage[1] + L.stage[3]) / 2 + 40
+        paste_c(im, sprite(sk, 560, color=COL[cn], face=True), cx, cy + math.sin(t * 3) * 8, elastic(bt / 0.5))
+        if q_on(b, t): qmark(d, L, t)
+        elif b["reveal"] is not None and t >= b["reveal"]:
+            banner(d, L, txt or SHAPE_NAME[sk], t - b["reveal"], size=130, col=COL[cn])
+    elif kind == "spattern":  # ¿qué forma falta?: ("scene", "spattern", [formas], idx) + fill
+        seq, miss = b["args"]; n = len(seq); sp = min(250, 900 / max(1, n - 1)); size = int(min(220, sp * 0.9))
+        y0 = L.H * (0.40 if not L.v else 0.42); x0 = L.W / 2 - sp * (n - 1) / 2
+        outlined(d, (L.W / 2, L.num_c[1]), "¿QUÉ FORMA FALTA?", font(80 if not L.v else 64), COL["purple"], sw=9)
+        for k, sk in enumerate(seq):
+            x = x0 + k * sp if not L.v else L.W * (0.25 + 0.5 * (k % 2)); y = y0 if not L.v else L.H * (0.30 + 0.15 * (k // 2))
+            tt = bt - k * 0.25
+            if tt < 0: continue
+            if k == miss and not (b["fill"] is not None and t >= b["fill"]):
+                p = elastic(tt / 0.6); h = size * 0.42 * p
+                d.rounded_rectangle([x - h, y - h, x + h, y + h], radius=int(h * 0.25) + 1, fill=(215, 215, 228), outline=(255, 255, 255), width=8)
+                outlined(d, (x, y + math.sin(t * 6) * 6), "?", font(max(1, h * 1.4)), (255, 255, 255), sw=6)
+            else:
+                st = (t - b["fill"]) if k == miss else tt
+                paste_c(im, sprite(sk, size), x, y + math.sin(t * 2.5 + k) * 4, elastic(st / 0.45))
+    elif kind == "house":  # casita hecha de formas: pop 1..6
+        hx = L.W / 2 + (0 if not L.v else 0); gy = L.H * (0.66 if not L.v else 0.58)
+        parts = [("cuadrado", "yellow", hx, gy - 150, 172), ("triangulo", "red", hx, gy - 300 - 0.78 * 172 + 14, 172),
+                 ("circulo", "cyan", hx - 70, gy - 190, 46), ("cuadrado", "brown", hx + 62, gy - 62, 70),
+                 ("corazonf", "pink", hx + 62, gy - 66, 26), ("estrellaf", "yellow", hx - (330 if not L.v else 300), gy - (420 if not L.v else 560), 66)]
+        shown = dict(b["pops"])
+        for i, (sk, cn, x, y, R) in enumerate(parts, 1):
+            if i in shown and t >= shown[i]:
+                paste_c(im, sprite(sk, int(R / 0.389), color=COL[cn]), x, y, elastic((t - shown[i]) / 0.5))
+    elif kind == "sreview":  # repaso de todas las formas: rpop 1..5 + confetti
+        pos = [(600, 300), (960, 300), (1320, 300), (780, 600), (1140, 600)] if not L.v else \
+              [(290, 620), (790, 620), (290, 960), (790, 960), (540, 1170)]
+        for i, tt in b["rpops"]:
+            if t < tt: continue
+            sk = SHAPES[i - 1]; x, y = pos[i - 1]; y += math.sin(t * 3 + i) * 6
+            paste_c(im, sprite(sk, 250, face=True), x, y, elastic((t - tt) / 0.5))
+            if t - tt > 0.3: outlined(d, (x, y + 132), SHAPE_NAME[sk], font(46), (255, 255, 255), sw=7)
+        if b["confetti"] and t >= b["confetti"]: confetti(d, L, t - b["confetti"])
     elif kind == "bye":
         banner(d, L, "¡ADIÓS!", bt, size=160, col=COL["orange"])
     # ----- personajes -----

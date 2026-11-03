@@ -70,10 +70,11 @@ for e in EV:
     for a in e["do"]:
         k = a[0]; s0 = e["start"]
         if k == "scene": at(s0 - 0.15, W)
-        elif k in ("pop", "rpop", "cd"): at(s0, P)
+        elif k in ("pop", "rpop", "cd", "side"): at(s0, P)
         elif k in ("numeral", "fill", "sc", "reveal"): at(s0, D)
         elif k in ("confetti",): at(s0, T)
         elif k == "launch": at(s0, R)
+        elif k == "trace": at(s0, W, 0.7)
         elif k in ("popall", "sa", "sb"): at(s0, P, 0.8)
     if any(a[0] == "scene" and a[1] in ("title", "end", "hello") for a in e["do"]): at(e["start"] + 0.3, T, 0.8)
 
