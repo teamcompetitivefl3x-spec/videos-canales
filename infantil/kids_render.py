@@ -694,8 +694,38 @@ def draw_frame(L, scen, t):
             paste_c(im, sprite(sk, 250, face=True), x, y, elastic((t - tt) / 0.5))
             if t - tt > 0.3: outlined(d, (x, y + 132), SHAPE_NAME[sk], font(46), (255, 255, 255), sw=7)
         if b["confetti"] and t >= b["confetti"]: confetti(d, L, t - b["confetti"])
+    elif kind == "size":   # grande y pequeño: ("scene", "size", objeto, lado_grande "L"|"R", meta "big"|"small", "GRANDE", "PEQUEÑO") + reveal
+        ok, bside, goal = b["args"][0], b["args"][1], b["args"][2]
+        lb = b["args"][3] if len(b["args"]) > 3 else "GRANDE"; ls = b["args"][4] if len(b["args"]) > 4 else "PEQUEÑO"
+        cy = (L.stage[1] + L.stage[3]) / 2 + (30 if not L.v else 40)
+        xl, xr = (L.W * 0.36, L.W * 0.64) if not L.v else (L.W * 0.32, L.W * 0.75)
+        big_s = 440 if not L.v else 540; sm_s = 190 if not L.v else 210
+        items = [("big", xl if bside == "L" else xr, big_s, lb), ("small", xr if bside == "L" else xl, sm_s, ls)]
+        rev = b["reveal"] is not None and t >= b["reveal"]
+        for k, (role, x, s, lab) in enumerate(items):
+            tt = bt - k * 0.35
+            if tt < 0: continue
+            yy = cy + (big_s - s) * 0.36 + math.sin(t * 2.5 + k) * 5
+            sc = elastic(tt / 0.5); alpha = 1.0
+            if rev:
+                rt = t - b["reveal"]
+                if role == goal:
+                    sc *= 1 + 0.10 * abs(math.sin(rt * 5)) * math.exp(-rt * 0.6)
+                    rr = s * 0.55 + 8 * math.sin(t * 6)
+                    d.ellipse([x - rr, yy - rr, x + rr, yy + rr], outline=COL["yellow"], width=14)
+                else:
+                    alpha = 0.55
+            paste_c(im, sprite(ok, s), x, yy, sc, math.sin(t * 2 + k) * 3, alpha=alpha)
+            if rev:
+                rt = t - b["reveal"]; ly = cy + big_s * 0.36 + (60 if not L.v else 70)
+                fsz = (64 if role == "big" else 50) if not L.v else (62 if role == "big" else 48)
+                p = elastic((rt - (0 if role == goal else 0.4)) / 0.5)
+                if p > 0:
+                    outlined(d, (x, ly), lab, font(fsz * p), COL["yellow"] if role == goal else (255, 255, 255), sw=max(1, int(8 * p)))
+        if q_on(b, t): qmark(d, L, t)
     elif kind == "bye":
         banner(d, L, "¡ADIÓS!", bt, size=160, col=COL["orange"])
+    if kind in ("card", "size", "bye") and b["confetti"] and t >= b["confetti"]: confetti(d, L, t - b["confetti"])
     # ----- personajes -----
     tw = env if who == "tula" else 0.0; pw_ = env if who == "pipo" else 0.0
     tsp = draw_tula(t, tw, danc); psp = draw_pipo(t, pw_, danc)
