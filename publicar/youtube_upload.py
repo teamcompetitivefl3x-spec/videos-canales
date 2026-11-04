@@ -99,6 +99,29 @@ def publicar(p, cfg):
     return out
 
 
+def verificar():
+    """Pedido {"accion": "verificar"}: solo comprueba cada token (no sube nada)."""
+    out = {}
+    for clave, cfg in CANALES.items():
+        refresh = os.environ.get(cfg["secret"], "")
+        if not refresh:
+            out[clave] = {"ok": False, "error": f"falta el secreto {cfg['secret']}"}; continue
+        try:
+            h = {"Authorization": f"Bearer {token(refresh)}"}
+            me = requests.get(f"{API}/channels", params={"part": "snippet,status", "mine": "true"}, headers=h, timeout=60)
+            me.raise_for_status()
+            it = (me.json().get("items") or [{}])[0]
+            ch_id = it.get("id", "")
+            out[clave] = {"ok": bool(ch_id) and (not cfg.get("channel_id") or ch_id == cfg["channel_id"]),
+                          "channel_id": ch_id, "channel_title": it.get("snippet", {}).get("title"),
+                          "esperado": cfg.get("channel_id") or "(sin definir)"}
+        except Exception as e:
+            out[clave] = {"ok": False, "error": str(e)[:300]}
+    for k in ("YT_CLIENT_ID", "YT_CLIENT_SECRET"):
+        out[k] = "cargado" if os.environ.get(k) else "FALTA"
+    return out
+
+
 def main():
     pedidos = sorted(glob.glob(os.path.join(ROOT, "cola", "*.json")))
     if not pedidos:
@@ -111,10 +134,13 @@ def main():
         res = {"pedido": nombre, "canal": p.get("canal"),
                "fecha": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds")}
         try:
-            if not cfg:
+            if p.get("accion") == "verificar":
+                res["verificacion"] = verificar(); print(json.dumps(res["verificacion"], ensure_ascii=False, indent=1))
+            elif not cfg:
                 raise RuntimeError(f"canal desconocido: {p.get('canal')}")
-            res.update(publicar(p, cfg))
-            print(f"OK {nombre}: {res['url']} en '{res['channel_title']}'")
+            else:
+                res.update(publicar(p, cfg))
+                print(f"OK {nombre}: {res['url']} en '{res['channel_title']}'")
         except Exception as e:
             fallos += 1
             res["error"] = str(e)
