@@ -37,3 +37,9 @@ Todo es gratis: voz con Kokoro (open source), animación con PIL/numpy, música 
 - Por canal, según el día del mes D y R = D % 6: R ∈ {1,3,5} → video largo · R ∈ {2,4} → Short · R = 0 → descanso.
 - Tope: 25 subidas automáticas por canal y por mes (23 en 2026-11), contadas en `historial.md` (líneas marcadas "auto"). Si se llega al tope, ese día no se publica.
 - Una sola llamada exitosa a Zapier por ejecución (la subida). Sin llamadas de verificación.
+
+## Publicación por API (gratis, sin Zapier) — `publicar/`
+- Configuración única de Charly: `publicar/GUIA.md` (proyecto de Google Cloud + 1 refresh token por canal en GitHub Secrets).
+- Flujo: subir el .mp4 y la miniatura a la rama del canal (`media-pulso`, `media-peque`, `media-curiosidades`; force-push con nombres con fecha) → crear `cola/AAAA-MM-DD_canal_tipo.json` (formato en `publicar/youtube_upload.py`) → `git pull --rebase` y push a `main`. El workflow `.github/workflows/publicar.yml` sube el video, verifica antes que el token sea del canal correcto (`publicar/canales.json`) y deja el resultado en `publicados/<mismo nombre>.json` (`video_id`, `url`, `channel_title` o `error`). Esperar ese archivo (`git pull`, ~2–5 min) antes de anotar el historial.
+- Cupo de la API: 100 subidas por día y por proyecto. En el historial, marcar estas líneas como `api` (no cuentan para el tope de Zapier).
+- Otros canales con el mismo motor: `MARCA="NOMBRE" TEMA='{"accent":[R,G,B]}' python3 render.py ...` cambia la etiqueta y la paleta sin tocar el código.

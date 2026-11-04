@@ -1,0 +1,20 @@
+{
+  "pulso": {
+    "nombre": "Pulso IA",
+    "channel_id": "UC2iTLuA6bWq6tBPKSf8u0AQ",
+    "secret": "YT_REFRESH_PULSO",
+    "made_for_kids": false
+  },
+  "peque": {
+    "nombre": "Peque Planeta",
+    "channel_id": "UCbICcOOsaLr8k29VjItsvHw",
+    "secret": "YT_REFRESH_PEQUE",
+    "made_for_kids": true
+  },
+  "curiosidades": {
+    "nombre": "(canal nuevo de curiosidades: completar)",
+    "channel_id": "",
+    "secret": "YT_REFRESH_CURIOSIDADES",
+    "made_for_kids": false
+  }
+}

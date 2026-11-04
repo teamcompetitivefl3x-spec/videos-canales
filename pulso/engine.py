@@ -17,6 +17,11 @@ C = dict(bg1=(8, 12, 26), bg2=(22, 28, 56), text=(255, 255, 255), muted=(158, 16
          accent=(255, 199, 56), red=(255, 92, 96), teal=(56, 214, 176), blue=(92, 140, 255),
          card=(26, 33, 64), card2=(40, 49, 88), line=(60, 70, 110), dark=(5, 8, 18))
 
+# Paleta de otro canal sin tocar el código: TEMA='{"accent": [80, 220, 255]}' python3 render.py ...
+import os as _os, json as _json
+if _os.environ.get("TEMA"):
+    C.update({k: tuple(v) for k, v in _json.loads(_os.environ["TEMA"]).items()})
+
 def clamp(x, a=0.0, b=1.0): return max(a, min(b, x))
 def ease(x): x = clamp(x); return 1 - (1 - x) ** 3
 def ease_io(x): x = clamp(x); return 3 * x * x - 2 * x * x * x

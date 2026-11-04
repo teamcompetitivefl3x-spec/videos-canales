@@ -1,8 +1,9 @@
 """Render: python3 render.py long VOICE [f0 f1 out.mp4]  |  python3 render.py short VOICE IDX"""
-import sys, json, math, subprocess
+import sys, os, json, math, subprocess
 import numpy as np, soundfile as sf
 from PIL import Image
 import engine as E
+MARCA = os.environ.get("MARCA", "PULSO IA")  # etiqueta del canal (otros canales: MARCA="...")
 from scenes import SCENES, SHORTS, CHAPTERS
 
 FPS = 25
@@ -110,13 +111,13 @@ def main():
         if mode == "long":
             d.rectangle([0, 0, W * (t / total), 6], fill=E.rgba(E.C["accent"]))
             d.text((60, 46), f"{CHAPTERS[sec_of[cur]]}", font=E.font("b", 28), fill=E.rgba(E.C["muted"], 230), anchor="lm")
-            d.text((W - 60, 46), "PULSO IA", font=E.font("b", 24), fill=E.rgba(E.C["muted"], 150), anchor="rm")
+            d.text((W - 60, 46), MARCA, font=E.font("b", 24), fill=E.rgba(E.C["muted"], 150), anchor="rm")
         else:
             E.rrect(d, (60, 120, W - 60, 270), 36, E.rgba(E.C["dark"], 200))
             f = E.fit("black", 64, spec["title"], W - 180)
             d.text((W / 2, 195), spec["title"], font=f, fill=E.rgba(E.C["accent"]), anchor="mm")
             d.rectangle([0, 0, W * (t / total), 10], fill=E.rgba(E.C["accent"]))
-            d.text((W / 2, 74), "PULSO IA", font=E.font("b", 30), fill=E.rgba(E.C["muted"], 170), anchor="mm")
+            d.text((W / 2, 74), MARCA, font=E.font("b", 30), fill=E.rgba(E.C["muted"], 170), anchor="mm")
         while ji + 1 < len(subs) and subs[ji + 1][0] <= t: ji += 1
         if subs and subs[ji][0] <= t < subs[ji][1] + 0.15 and sc["type"] != "chapter":
             E.draw_sub(ctx, T, subs[ji][2])

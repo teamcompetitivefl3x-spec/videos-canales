@@ -1,0 +1,46 @@
+name: Publicar en YouTube (API gratis)
+
+on:
+  push:
+    branches: [main]
+    paths: ["cola/*.json"]
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publicar
+  cancel-in-progress: false
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install requests
+      - name: Subir pedidos de la cola
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_PULSO: ${{ secrets.YT_REFRESH_PULSO }}
+          YT_REFRESH_PEQUE: ${{ secrets.YT_REFRESH_PEQUE }}
+          YT_REFRESH_CURIOSIDADES: ${{ secrets.YT_REFRESH_CURIOSIDADES }}
+        run: python publicar/youtube_upload.py
+        continue-on-error: true
+        id: subir
+      - name: Guardar resultados en main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add -A cola publicados
+          git diff --cached --quiet && exit 0
+          git commit -m "Resultados de publicación $(date -u +%F)"
+          for i in 1 2 3; do git pull --rebase -q origin main && git push -q origin HEAD:main && break; sleep 5; done
+      - name: Marcar fallo si hubo errores
+        if: steps.subir.outcome == 'failure'
+        run: exit 1
