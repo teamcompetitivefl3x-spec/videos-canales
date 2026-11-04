@@ -1,0 +1,21 @@
+{
+ "pedido": "2026-11-04_verificar.json",
+ "canal": null,
+ "fecha": "2026-11-04T00:41:40+00:00",
+ "verificacion": {
+  "pulso": {
+   "ok": false,
+   "error": "falta el secreto YT_REFRESH_PULSO"
+  },
+  "peque": {
+   "ok": false,
+   "error": "falta el secreto YT_REFRESH_PEQUE"
+  },
+  "curiosidades": {
+   "ok": false,
+   "error": "falta el secreto YT_REFRESH_CURIOSIDADES"
+  },
+  "YT_CLIENT_ID": "FALTA",
+  "YT_CLIENT_SECRET": "FALTA"
+ }
+}
