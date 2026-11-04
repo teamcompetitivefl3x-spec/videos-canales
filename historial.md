@@ -10,3 +10,4 @@ fecha · canal · título · ID de YouTube
 2026-11-03 · Peque Planeta · auto · largo · ¡Aprendemos las formas con Tula y Pipo! 🔺 Círculo, cuadrado, triángulo, estrella y corazón · WJsAj6QwDhw
 2026-11-03 · Pulso IA · auto · largo · ¿Cuánta agua y energía gasta de verdad preguntarle algo a la IA? Los números reales · DNSWf3aYgOc
 2026-11-04 · Peque Planeta · auto · short · ¿Cuál es el GRANDE? 🍎 Grande y pequeño con Tula y Pipo #shorts · -LaaBLLbqEM
+2026-11-04 · Pulso IA · auto · short · Le robaron la clave de su IA: la factura pasó de 180 a 82.000 dólares #shorts · 2wuiqnyF3Vo
