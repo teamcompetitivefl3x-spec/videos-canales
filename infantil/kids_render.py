@@ -144,6 +144,100 @@ def shape_face(d, kind, c, r, S):
     for ex in (-0.5, 0.5):
         d.ellipse([c + r * ex - r * 0.11, fy + r * 0.02, c + r * ex + r * 0.11, fy + r * 0.14], fill=(255, 150, 170, 170))
 
+# ---------- animales (caritas simples, de frente) ----------
+ANIMALS = ("vaca", "perro", "gato", "pato", "oveja")
+ANIMAL_COL = {"vaca": "pink", "perro": "red", "gato": "orange", "pato": "yellow", "oveja": "cyan"}
+
+def _eyes(d, c, y, r, dx=0.32, s=0.15):
+    ew = r * s
+    for ex in (-dx, dx):
+        x = c + r * ex
+        d.ellipse([x - ew, y - ew * 1.2, x + ew, y + ew * 1.2], fill=(255, 255, 255), outline=COL["dark"], width=max(1, int(ew * 0.18)))
+        d.ellipse([x - ew * 0.62, y - ew * 0.55, x + ew * 0.62, y + ew * 0.85], fill=COL["dark"])
+        d.ellipse([x - ew * 0.3, y - ew * 0.45, x + ew * 0.08, y - ew * 0.05], fill=(255, 255, 255))
+
+def _cheeks(d, c, y, r, dx=0.55):
+    for ex in (-dx, dx):
+        d.ellipse([c + r * ex - r * 0.12, y - r * 0.07, c + r * ex + r * 0.12, y + r * 0.07], fill=(255, 150, 170, 190))
+
+def animal_face(d, kind, c, r, W, C):
+    lw = max(2, int(W * 0.012))
+    if kind == "vaca":
+        for sx in (-1, 1):   # cuernos y orejas
+            d.polygon([(c + sx * r * 0.42, c - r * 0.72), (c + sx * r * 0.62, c - r * 1.22), (c + sx * r * 0.72, c - r * 0.62)], fill=(250, 230, 170))
+            d.ellipse([c + sx * r * 0.7 - r * 0.38, c - r * 0.62, c + sx * r * 0.7 + r * 0.38, c - r * 0.28], fill=(245, 245, 245), outline=COL["dark"], width=lw)
+            d.ellipse([c + sx * r * 0.78 - r * 0.2, c - r * 0.54, c + sx * r * 0.78 + r * 0.2, c - r * 0.36], fill=C("pink"))
+        d.ellipse([c - r * 0.78, c - r * 0.9, c + r * 0.78, c + r * 0.7], fill=(250, 250, 250), outline=COL["dark"], width=lw)
+        d.ellipse([c - r * 0.7, c - r * 0.78, c - r * 0.22, c - r * 0.3], fill=COL["dark"])
+        d.ellipse([c + r * 0.28, c - r * 0.1, c + r * 0.66, c + r * 0.3], fill=COL["dark"])
+        d.ellipse([c - r * 0.62, c + r * 0.12, c + r * 0.62, c + r * 0.98], fill=C("pink"), outline=COL["dark"], width=lw)
+        for sx in (-1, 1):
+            d.ellipse([c + sx * r * 0.25 - r * 0.09, c + r * 0.45, c + sx * r * 0.25 + r * 0.09, c + r * 0.62], fill=(170, 80, 100))
+        _eyes(d, c, c - r * 0.28, r)
+        d.arc([c - r * 0.22, c + r * 0.62, c + r * 0.22, c + r * 0.86], 20, 160, fill=COL["dark"], width=lw)
+    elif kind == "perro":
+        body = C("brown"); ear = (100, 60, 35) if not C("brown") == (205, 205, 215) else (185, 185, 198)
+        d.ellipse([c - r * 0.9, c - r * 0.85, c + r * 0.9, c + r * 0.85], fill=body)
+        d.ellipse([c - r * 0.42, c + r * 0.0, c + r * 0.42, c + r * 0.78], fill=(235, 205, 165) if body != (205, 205, 215) else (225, 225, 232))
+        for sx in (-1, 1):   # orejas caídas
+            d.ellipse([c + sx * r * 0.95 - r * 0.32, c - r * 0.85, c + sx * r * 0.95 + r * 0.32, c + r * 0.45], fill=ear)
+        d.ellipse([c - r * 0.6, c - r * 0.62, c - r * 0.05, c - r * 0.05], fill=(235, 205, 165) if body != (205, 205, 215) else (225, 225, 232))
+        _eyes(d, c, c - r * 0.3, r)
+        d.ellipse([c - r * 0.18, c + r * 0.08, c + r * 0.18, c + r * 0.32], fill=COL["dark"])
+        d.ellipse([c - r * 0.08, c + r * 0.11, c + r * 0.02, c + r * 0.18], fill=(255, 255, 255, 180))
+        d.line([(c, c + r * 0.32), (c, c + r * 0.45)], fill=COL["dark"], width=lw)
+        d.arc([c - r * 0.25, c + r * 0.3, c, c + r * 0.55], 0, 180, fill=COL["dark"], width=lw)
+        d.arc([c, c + r * 0.3, c + r * 0.25, c + r * 0.55], 0, 180, fill=COL["dark"], width=lw)
+        d.rounded_rectangle([c - r * 0.1, c + r * 0.5, c + r * 0.1, c + r * 0.75], radius=int(r * 0.1), fill=C("red"))
+        _cheeks(d, c, c + r * 0.15, r)
+    elif kind == "gato":
+        body = C("orange")
+        for sx in (-1, 1):
+            d.polygon([(c + sx * r * 0.85, c - r * 0.25), (c + sx * r * 0.75, c - r * 1.15), (c + sx * r * 0.2, c - r * 0.65)], fill=body)
+            d.polygon([(c + sx * r * 0.7, c - r * 0.4), (c + sx * r * 0.68, c - r * 0.92), (c + sx * r * 0.38, c - r * 0.62)], fill=COL["pink"] if body != (205, 205, 215) else (225, 225, 232))
+        d.ellipse([c - r * 0.95, c - r * 0.8, c + r * 0.95, c + r * 0.85], fill=body)
+        for k in (-0.25, 0.0, 0.25):   # rayitas
+            d.line([(c + r * k, c - r * 0.78), (c + r * k * 0.8, c - r * 0.5)], fill=(225, 110, 20) if body != (205, 205, 215) else (185, 185, 198), width=int(W * 0.02))
+        d.ellipse([c - r * 0.4, c + r * 0.05, c + r * 0.4, c + r * 0.6], fill=(255, 235, 210) if body != (205, 205, 215) else (225, 225, 232))
+        _eyes(d, c, c - r * 0.2, r, dx=0.35, s=0.16)
+        d.polygon([(c - r * 0.1, c + r * 0.1), (c + r * 0.1, c + r * 0.1), (c, c + r * 0.22)], fill=COL["pink"] if body != (205, 205, 215) else (185, 185, 198))
+        d.arc([c - r * 0.2, c + r * 0.12, c, c + r * 0.36], 0, 180, fill=COL["dark"], width=lw)
+        d.arc([c, c + r * 0.12, c + r * 0.2, c + r * 0.36], 0, 180, fill=COL["dark"], width=lw)
+        for sx in (-1, 1):   # bigotes
+            for dy in (-0.05, 0.08):
+                d.line([(c + sx * r * 0.42, c + r * (0.2 + dy)), (c + sx * r * 1.12, c + r * (0.14 + dy * 2.2))], fill=COL["dark"], width=max(1, lw // 2))
+        _cheeks(d, c, c + r * 0.05, r, 0.6)
+    elif kind == "pato":
+        body = C("yellow")
+        for k, (x, y) in enumerate(((-0.1, -1.0), (0.08, -1.08), (0.22, -0.98))):   # copete
+            d.ellipse([c + r * x - r * 0.12, c + r * y - r * 0.2, c + r * x + r * 0.12, c + r * y + r * 0.2], fill=body)
+        d.ellipse([c - r * 0.92, c - r * 0.92, c + r * 0.92, c + r * 0.92], fill=body)
+        _eyes(d, c, c - r * 0.3, r, dx=0.34, s=0.17)
+        bk = C("orange") if body != (205, 205, 215) else (185, 185, 198)
+        d.ellipse([c - r * 0.6, c + r * 0.0, c + r * 0.6, c + r * 0.38], fill=bk)
+        d.ellipse([c - r * 0.52, c + r * 0.24, c + r * 0.52, c + r * 0.56], fill=(235, 120, 20) if body != (205, 205, 215) else (175, 175, 188))
+        d.line([(c - r * 0.5, c + r * 0.3), (c + r * 0.5, c + r * 0.3)], fill=(200, 95, 15), width=lw)
+        for sx in (-1, 1): d.ellipse([c + sx * r * 0.2 - r * 0.04, c + r * 0.1, c + sx * r * 0.2 + r * 0.04, c + r * 0.16], fill=(170, 80, 10))
+        _cheeks(d, c, c + r * 0.02, r, 0.68)
+    elif kind == "oveja":
+        wool = (250, 250, 252) if C("cyan") != (205, 205, 215) else (205, 205, 215)
+        for i in range(12):
+            a = math.radians(i * 30); x, y = c + r * 0.72 * math.cos(a), c + r * 0.72 * math.sin(a)
+            d.ellipse([x - r * 0.36, y - r * 0.36, x + r * 0.36, y + r * 0.36], fill=wool, outline=(215, 215, 225), width=lw)
+        d.ellipse([c - r * 0.8, c - r * 0.8, c + r * 0.8, c + r * 0.8], fill=wool)
+        face = (95, 85, 95) if wool[0] == 250 else (160, 160, 172)
+        for sx in (-1, 1):
+            d.ellipse([c + sx * r * 0.62 - r * 0.3, c - r * 0.32, c + sx * r * 0.62 + r * 0.3, c - r * 0.08], fill=face)
+        d.ellipse([c - r * 0.48, c - r * 0.5, c + r * 0.48, c + r * 0.78], fill=face)
+        for (x, y) in ((-0.25, -0.62), (0.0, -0.72), (0.25, -0.62)):   # flequillo
+            d.ellipse([c + r * x - r * 0.2, c + r * y - r * 0.2, c + r * x + r * 0.2, c + r * y + r * 0.2], fill=wool)
+        _eyes(d, c, c - r * 0.12, r, dx=0.2, s=0.13)
+        d.arc([c - r * 0.16, c + r * 0.3, c + r * 0.16, c + r * 0.52], 20, 160, fill=(255, 255, 255), width=lw)
+        _cheeks(d, c, c + r * 0.22, r, 0.3)
+
+def silhouette(spr, col=(120, 110, 170)):
+    s = Image.new("RGBA", spr.size, col + (255,)); s.putalpha(spr.getchannel("A")); return s
+
 def obj_sprite(kind, size=220, color=None, gray=False, face=False):
     S = 4; W = size * S; im = Image.new("RGBA", (W, W), (0, 0, 0, 0)); d = ImageDraw.Draw(im)
     c = W / 2; r = W * 0.36
@@ -260,6 +354,8 @@ def obj_sprite(kind, size=220, color=None, gray=False, face=False):
     elif kind == "corazon":
         heart(d, c, c, r * 1.05, C("red"))
         d.ellipse([c - r * 0.65, c - r * 0.6, c - r * 0.35, c - r * 0.3], fill=(255, 255, 255, 150))
+    elif kind in ANIMALS:
+        animal_face(d, kind, c, r, W, C)
     elif kind == "cohete":
         d.polygon([(c, c - r * 1.4), (c - r * 0.45, c - r * 0.5), (c + r * 0.45, c - r * 0.5)], fill=COL["red"])
         d.rounded_rectangle([c - r * 0.45, c - r * 0.6, c + r * 0.45, c + r * 0.9], radius=int(r * 0.2), fill=(240, 240, 248))
@@ -609,6 +705,11 @@ def draw_frame(L, scen, t):
         txt = b["args"][0]; cn = b["args"][1] if len(b["args"]) > 1 else "yellow"
         big = 150 if len(txt) <= 11 else (115 if len(txt) <= 17 else 96) if not L.v else (80 if len(txt) <= 17 else 66)
         banner(d, L, txt, bt, y=L.H * (0.30 if not L.v else 0.27), size=big, col=COL[cn])
+        if len(b["args"]) > 2:   # objetos opcionales que aparecen debajo del cartel
+            objs = b["args"][2]; sz = 300 if L.v else 240
+            box = (L.stage[0], L.stage[1] + (120 if L.v else 140), L.stage[2], L.stage[3] + (40 if L.v else 0))
+            for k, (x, y) in enumerate(grid_positions(len(objs), box, sz)):
+                paste_c(im, sprite(objs[k], sz), x, y + math.sin(t * 3 + k) * 8, elastic((bt - 0.5 - k * 0.25) / 0.45), math.sin(t * 2 + k) * 5)
     elif kind == "shape":  # forma grande que se dibuja: trace -> fill (cara) -> reveal (nombre) -> side i (lados/puntas)
         sk = b["args"][0]; cx = (L.stage[0] + L.stage[2]) / 2; cy = (L.stage[1] + L.stage[3]) / 2 + (40 if not L.v else 60)
         R = 225 if not L.v else 250; col = COL[SHAPE_COL[sk]]
@@ -723,9 +824,36 @@ def draw_frame(L, scen, t):
                 if p > 0:
                     outlined(d, (x, ly), lab, font(fsz * p), COL["yellow"] if role == goal else (255, 255, 255), sw=max(1, int(8 * p)))
         if q_on(b, t): qmark(d, L, t)
+    elif kind == "animal":  # ¿quién hace...?: ("scene", "animal", animal, "¡MUU!", "VACA") + qmark (sonido) + reveal
+        ak, snd, name = b["args"][0], b["args"][1], b["args"][2]
+        cx = (L.stage[0] + L.stage[2]) / 2; cy = (L.stage[1] + L.stage[3]) / 2 + (30 if not L.v else 70)
+        sz = 560 if not L.v else 780
+        rev = b["reveal"] is not None and t >= b["reveal"]
+        spr = sprite(ak, sz)
+        if not rev:
+            key = ("sil", ak, sz)
+            if key not in _sp: _sp[key] = silhouette(spr)
+            wig = math.sin(t * 3) * 4
+            paste_c(im, _sp[key], cx, cy + math.sin(t * 2.5) * 6, elastic(bt / 0.5), wig)
+            if bt > 0.4: outlined(d, (cx, cy + 10 + math.sin(t * 6) * 8), "?", font(260), (255, 255, 255), sw=12)
+        else:
+            rt = t - b["reveal"]
+            paste_c(im, spr, cx, cy + math.sin(t * 2.5) * 6, elastic(rt / 0.5) * (1 + 0.06 * math.sin(t * 4)), math.sin(t * 3) * 4)
+        ys = L.num_c[1] + (40 if L.v else -10)
+        if q_on(b, t) or rev:
+            qt = next((tt for v, tt in b["q"] if v), t)
+            p = elastic((t - qt) / 0.5)
+            if rev: p = 1.0
+            fs = (120 if not rev else 64) if L.v else (110 if not rev else 60)
+            yy = ys if not rev else ys + (120 if L.v else 90)
+            if p > 0:
+                xs = cx + (0 if L.v else 380)
+                outlined(d, (xs, yy + math.sin(t * 8) * 6), snd, font(fs * p), COL["yellow"] if not rev else (255, 255, 255), sw=max(1, int(11 * p)))
+        if rev:
+            banner(d, L, name, t - b["reveal"], y=ys - (0 if L.v else 0), size=140 if L.v else 120, col=COL[ANIMAL_COL[ak]])
     elif kind == "bye":
         banner(d, L, "¡ADIÓS!", bt, size=160, col=COL["orange"])
-    if kind in ("card", "size", "bye") and b["confetti"] and t >= b["confetti"]: confetti(d, L, t - b["confetti"])
+    if kind in ("card", "size", "bye", "animal") and b["confetti"] and t >= b["confetti"]: confetti(d, L, t - b["confetti"])
     # ----- personajes -----
     tw = env if who == "tula" else 0.0; pw_ = env if who == "pipo" else 0.0
     tsp = draw_tula(t, tw, danc); psp = draw_pipo(t, pw_, danc)
