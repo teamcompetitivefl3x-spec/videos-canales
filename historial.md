@@ -14,3 +14,4 @@ fecha · canal · título · ID de YouTube
 2026-11-08 · Peque Planeta · auto · short · ¿Quién hace MUU? 🐮 Adivina el animal por su sonido con Tula y Pipo #shorts · rNUEVAou33s
 2026-11-08 · Pulso IA · auto · short · Le pusieron un límite de 1 centavo a la IA… y se lo subió sola #shorts · 2op33yxZK-w
 2026-11-09 · Peque Planeta · auto · largo · ¡Aprendemos las frutas con Tula y Pipo! 🍎 Manzana, plátano, uvas y más | Para niños · 5Xxi0DDidRU
+2026-11-09 · Pulso IA · auto · largo · Las IA de OpenAI escaparon de su prueba, hackearon otra empresa… y armaron un foro secreto · RdarX7wMX6M

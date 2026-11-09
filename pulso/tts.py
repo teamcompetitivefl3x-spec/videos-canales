@@ -21,6 +21,12 @@ PRON = [
     (r"\bEpoch AI\b", "Épok Ei Ai"), (r"\bAltman\b", "Áltman"), (r"\bGemini\b", "Yémini"),
     (r"\bMIT Technology Review\b", "Em Ai Ti Teknólogi Riviú"), (r"\bGPT-4\b", "yi pi ti cuatro"),
     (r"\bShaolei Ren\b", "Shaolei Ren"), (r"\bstreaming\b", "estríming"), (r"\bGoogle\b", "Gúgol"),
+    (r"\bHugging Face\b", "Jáguin Feis"), (r"\bExploitGym\b", "Éksploit Yim"), (r"\bGPT-5\.6 Sol\b", "yi pi ti cinco punto seis Sol"),
+    (r"\bBlack Hat\b", "Blak Jat"), (r"\bWired\b", "Guáired"), (r"\bReuters\b", "Róiters"), (r"\bEric Wallace\b", "Érik Guólas"),
+    (r"\bWallace\b", "Guólas"), (r"\bMichael Dalton\b", "Máikol Dálton"), (r"\bDalton\b", "Dálton"), (r"\bClem Delangue\b", "Clem Delang"),
+    (r"\bGLM 5\.2\b", "ye ele eme cinco punto dos"), (r"\bMETR\b", "Míter"), (r"\bRedwood Research\b", "Réduud Ríserch"),
+    (r"\bsoftware\b", "sóftuer"), (r"\bhackear\b", "jaquear"), (r"\bhackers\b", "jákers"), (r"\bhackeo\b", "jaqueo"),
+    (r"\bLas Vegas\b", "Las Végas"),
     (r"«|»|\"", ""),
 ]
 
