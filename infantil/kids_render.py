@@ -235,13 +235,83 @@ def animal_face(d, kind, c, r, W, C):
         d.arc([c - r * 0.16, c + r * 0.3, c + r * 0.16, c + r * 0.52], 20, 160, fill=(255, 255, 255), width=lw)
         _cheeks(d, c, c + r * 0.22, r, 0.3)
 
+# ---------- frutas (episodio de frutas) ----------
+FRUITS = ("banana", "naranja", "uvas", "fresa", "pera")
+LEAF, LEAF2, STEM = (80, 175, 70), (55, 140, 55), (125, 80, 45)
+
+def _leaf(d, K, x, y, w, h, ang):
+    pts = []
+    for k in range(24):
+        th = 2 * math.pi * k / 24; ex, ey = w * math.cos(th), h * math.sin(th) * (1 - 0.35 * math.cos(th))
+        a = math.radians(ang); pts.append((x + ex * math.cos(a) - ey * math.sin(a), y + ex * math.sin(a) + ey * math.cos(a)))
+    d.polygon(pts, fill=K(LEAF))
+    a = math.radians(ang); d.line([(x - w * 0.8 * math.cos(a), y - w * 0.8 * math.sin(a)), (x + w * 0.8 * math.cos(a), y + w * 0.8 * math.sin(a))], fill=K(LEAF2), width=max(2, int(h * 0.12)))
+
+def fruit_draw(d, kind, c, r, W, K):
+    lw = max(2, int(W * 0.012))
+    if kind == "banana":
+        cy0 = c - r * 0.85; R = r * 1.12; outer, inner, mid = [], [], []
+        for i in range(61):
+            u = i / 60; a = math.radians(30 + 120 * u); th = r * (0.1 + 0.5 * math.sin(math.pi * u) ** 0.8)
+            ca, sa = math.cos(a), math.sin(a)
+            outer.append((c - r * 0.08 + (R + th / 2) * ca, cy0 + (R + th / 2) * sa)); inner.append((c - r * 0.08 + (R - th / 2) * ca, cy0 + (R - th / 2) * sa))
+            mid.append((c - r * 0.08 + (R - th * 0.1) * ca, cy0 + (R - th * 0.1) * sa))
+        d.polygon(outer + inner[::-1], fill=K((255, 214, 50)), outline=K((215, 160, 20)))
+        d.line(outer + inner[::-1] + [outer[0]], fill=K((215, 160, 20)), width=lw, joint="curve")
+        d.line(mid[8:52], fill=K((250, 235, 140)), width=int(r * 0.07), joint="curve")
+        x0, y0 = (outer[0][0] + inner[0][0]) / 2, (outer[0][1] + inner[0][1]) / 2   # tallo (derecha)
+        d.polygon([(x0 - r * 0.05, y0 - r * 0.02), (x0 + r * 0.22, y0 - r * 0.32), (x0 + r * 0.32, y0 - r * 0.22), (x0 + r * 0.06, y0 + r * 0.08)], fill=K((120, 150, 60)))
+        x1, y1 = (outer[-1][0] + inner[-1][0]) / 2, (outer[-1][1] + inner[-1][1]) / 2
+        d.ellipse([x1 - r * 0.07, y1 - r * 0.07, x1 + r * 0.07, y1 + r * 0.07], fill=K((90, 60, 30)))
+    elif kind == "naranja":
+        d.ellipse([c - r * 0.95, c - r * 0.85, c + r * 0.95, c + r * 1.05], fill=K((255, 150, 35)), outline=K((225, 115, 15)), width=lw)
+        rn = random.Random(7)
+        for _ in range(26):
+            a = rn.uniform(0, 2 * math.pi); q = rn.uniform(0.1, 0.8); x, y = c + r * 0.95 * q * math.cos(a), c + r * 0.1 + r * 0.9 * q * math.sin(a)
+            d.ellipse([x - r * 0.03, y - r * 0.03, x + r * 0.03, y + r * 0.03], fill=K((240, 125, 20)))
+        d.ellipse([c - r * 0.6, c - r * 0.55, c - r * 0.25, c - r * 0.2], fill=K((255, 205, 140)))
+        d.line([(c, c - r * 0.82), (c + r * 0.05, c - r * 1.0)], fill=K(STEM), width=int(r * 0.09))
+        _leaf(d, K, c + r * 0.32, c - r * 0.98, r * 0.32, r * 0.14, -20)
+    elif kind == "uvas":
+        d.line([(c, c - r * 0.75), (c + r * 0.12, c - r * 1.15)], fill=K(STEM), width=int(r * 0.09))
+        _leaf(d, K, c + r * 0.42, c - r * 1.0, r * 0.36, r * 0.18, -25)
+        g = r * 0.25
+        for row, (yy, n) in enumerate(((-0.55, 4), (-0.12, 3), (0.3, 3), (0.7, 2), (1.05, 1))):
+            for k in range(n):
+                x = c + (k - (n - 1) / 2) * g * 1.75 + (0.06 * r if row % 2 else 0); y = c + r * yy
+                d.ellipse([x - g, y - g, x + g, y + g], fill=K((150, 75, 200)), outline=K((105, 45, 155)), width=lw)
+                d.ellipse([x - g * 0.55, y - g * 0.6, x - g * 0.15, y - g * 0.2], fill=K((215, 175, 240)))
+    elif kind == "fresa":
+        body = K((235, 45, 70))
+        d.ellipse([c - r * 0.92, c - r * 0.62, c + r * 0.92, c + r * 0.42], fill=body)
+        d.polygon([(c - r * 0.9, c - r * 0.18), (c + r * 0.9, c - r * 0.18), (c + r * 0.18, c + r * 1.0), (c - r * 0.18, c + r * 1.0)], fill=body)
+        d.ellipse([c - r * 0.22, c + r * 0.8, c + r * 0.22, c + r * 1.12], fill=body)
+        for (x, y) in ((-0.55, -0.25), (-0.2, -0.3), (0.2, -0.3), (0.55, -0.25), (-0.38, 0.1), (0.0, 0.08), (0.38, 0.1),
+                       (-0.2, 0.45), (0.2, 0.45), (0.0, 0.78)):
+            d.ellipse([c + r * x - r * 0.04, c + r * y - r * 0.065, c + r * x + r * 0.04, c + r * y + r * 0.065], fill=K((255, 225, 90)))
+        d.polygon(star_pts(c, c - r * 0.6, r * 0.62, r * 0.22, n=6, rot=-90), fill=K(LEAF))
+        d.line([(c, c - r * 0.65), (c + r * 0.06, c - r * 1.02)], fill=K((70, 150, 60)), width=int(r * 0.09))
+        d.ellipse([c - r * 0.6, c - r * 0.45, c - r * 0.3, c - r * 0.2], fill=K((255, 150, 165)))
+    elif kind == "pera":
+        body = K((175, 212, 70)); ol = K((130, 170, 40))
+        d.ellipse([c - r * 0.48, c - r * 0.85, c + r * 0.48, c + r * 0.1], fill=body, outline=ol, width=lw)
+        d.ellipse([c - r * 0.82, c - r * 0.25, c + r * 0.82, c + r * 1.12], fill=body, outline=ol, width=lw)
+        d.polygon([(c - r * 0.46, c - r * 0.3), (c + r * 0.46, c - r * 0.3), (c + r * 0.74, c + r * 0.2), (c - r * 0.74, c + r * 0.2)], fill=body)
+        d.ellipse([c - r * 0.45, c - r * 0.1, c - r * 0.15, c + r * 0.35], fill=K((220, 240, 160)))
+        d.line([(c, c - r * 0.82), (c + r * 0.1, c - r * 1.18)], fill=K(STEM), width=int(r * 0.09))
+        _leaf(d, K, c + r * 0.38, c - r * 1.05, r * 0.3, r * 0.14, -15)
+
 def silhouette(spr, col=(120, 110, 170)):
     s = Image.new("RGBA", spr.size, col + (255,)); s.putalpha(spr.getchannel("A")); return s
 
 def obj_sprite(kind, size=220, color=None, gray=False, face=False):
     S = 4; W = size * S; im = Image.new("RGBA", (W, W), (0, 0, 0, 0)); d = ImageDraw.Draw(im)
     c = W / 2; r = W * 0.36
+    if kind == "manzanar": kind = "manzana"; color = color or (230, 45, 55)
     def C(name): return (205, 205, 215) if gray else (color or COL[name])
+    def K(rgb):   # color fijo; en gris, conserva la luminosidad para que se vean los detalles
+        if not gray: return rgb
+        a = rgb[3:] ; v = int(150 + 0.36 * (0.3 * rgb[0] + 0.59 * rgb[1] + 0.11 * rgb[2])); return (v, v, min(255, v + 8)) + tuple(a)
     ol = (0, 0, 0, 0)
     if kind in SHAPES:
         rr = r * 1.08; pts = shape_pts(kind, c, c, rr, 160)
@@ -329,7 +399,7 @@ def obj_sprite(kind, size=220, color=None, gray=False, face=False):
         d.ellipse([c + r * 0.08, c - r * 1.15, c + r * 0.6, c - r * 0.8], fill=(70, 160, 60) if not gray else (180, 180, 190))
         d.ellipse([c - r * 0.95, c - r * 0.75, c + r * 0.15, c + r * 0.95], fill=C("green"))
         d.ellipse([c - r * 0.15, c - r * 0.75, c + r * 0.95, c + r * 0.95], fill=C("green"))
-        d.ellipse([c - r * 0.6, c - r * 0.45, c - r * 0.3, c - r * 0.05], fill=(255, 255, 255, 140))
+        hc = C("green"); d.ellipse([c - r * 0.6, c - r * 0.45, c - r * 0.3, c - r * 0.05], fill=tuple(int(v + (255 - v) * 0.55) for v in hc[:3]))
     elif kind == "estrella":
         d.polygon(star_pts(c, c + r * 0.05, r * 1.15, r * 0.5), fill=C("purple"))
         d.ellipse([c - r * 0.3, c - r * 0.1, c - r * 0.12, c + r * 0.1], fill=COL["dark"]); d.ellipse([c + r * 0.12, c - r * 0.1, c + r * 0.3, c + r * 0.1], fill=COL["dark"])
@@ -356,6 +426,8 @@ def obj_sprite(kind, size=220, color=None, gray=False, face=False):
         d.ellipse([c - r * 0.65, c - r * 0.6, c - r * 0.35, c - r * 0.3], fill=(255, 255, 255, 150))
     elif kind in ANIMALS:
         animal_face(d, kind, c, r, W, C)
+    elif kind in FRUITS:
+        fruit_draw(d, kind, c, r, W, K)
     elif kind == "cohete":
         d.polygon([(c, c - r * 1.4), (c - r * 0.45, c - r * 0.5), (c + r * 0.45, c - r * 0.5)], fill=COL["red"])
         d.rounded_rectangle([c - r * 0.45, c - r * 0.6, c + r * 0.45, c + r * 0.9], radius=int(r * 0.2), fill=(240, 240, 248))
@@ -563,11 +635,11 @@ def notes(d, L, tt):
 def draw_frame(L, scen, t):
     b = block_at(t); kind = b["kind"]; bt = t - b["start"]
     night = 0.0
-    if kind == "count" and b["args"][0] == 5: night = min(1, bt / 0.8) * 0.85 * min(1, max(0, (b["end"] - t) / 0.6))
+    if kind == "count" and b["args"][0] == 5 and len(b["args"]) == 1: night = min(1, bt / 0.8) * 0.85 * min(1, max(0, (b["end"] - t) / 0.6))
     im = scen.frame(t, night); d = ImageDraw.Draw(im)
     who, env = speaking(t)
     danc = 1.0 if (kind == "dance" and b["dancing"] and t >= b["dancing"]) or kind in ("title", "end") else 0.0
-    if kind in ("review", "sreview") and b["confetti"] and t >= b["confetti"]: danc = 1.0
+    if kind in ("review", "sreview", "freview", "bowl") and b["confetti"] and t >= b["confetti"]: danc = 1.0
     # ----- contenido -----
     if kind == "title" or kind == "end":
         txt1, txt2 = TITLE if kind == "title" else ("¡HASTA LA", "PRÓXIMA!")
@@ -586,7 +658,7 @@ def draw_frame(L, scen, t):
     elif kind == "hello":
         banner(d, L, "¡Hola!", bt, size=150)
     elif kind in ("count", "quiz"):
-        n = b["args"][0]; ok = KIND[n] if kind == "count" else b["args"][1]
+        n = b["args"][0]; ok = (b["args"][1] if len(b["args"]) > 1 else KIND[n]) if kind == "count" else b["args"][1]
         size = 300 if n <= 4 else 240 if n <= 8 else 210
         if ok in SHAPES: size = int(size * 0.8)
         if L.v: size = int(size * 0.85)
@@ -763,9 +835,9 @@ def draw_frame(L, scen, t):
         elif b["reveal"] is not None and t >= b["reveal"]:
             banner(d, L, txt or SHAPE_NAME[sk], t - b["reveal"], size=130, col=COL[cn])
     elif kind == "spattern":  # ¿qué forma falta?: ("scene", "spattern", [formas], idx) + fill
-        seq, miss = b["args"]; n = len(seq); sp = min(250, 900 / max(1, n - 1)); size = int(min(220, sp * 0.9))
+        seq, miss = b["args"][0], b["args"][1]; n = len(seq); sp = min(250, 900 / max(1, n - 1)); size = int(min(220, sp * 0.9))
         y0 = L.H * (0.40 if not L.v else 0.42); x0 = L.W / 2 - sp * (n - 1) / 2
-        outlined(d, (L.W / 2, L.num_c[1]), "¿QUÉ FORMA FALTA?", font(80 if not L.v else 64), COL["purple"], sw=9)
+        outlined(d, (L.W / 2, L.num_c[1]), b["args"][2] if len(b["args"]) > 2 else "¿QUÉ FORMA FALTA?", font(80 if not L.v else 64), COL["purple"], sw=9)
         for k, sk in enumerate(seq):
             x = x0 + k * sp if not L.v else L.W * (0.25 + 0.5 * (k % 2)); y = y0 if not L.v else L.H * (0.30 + 0.15 * (k // 2))
             tt = bt - k * 0.25
@@ -851,9 +923,67 @@ def draw_frame(L, scen, t):
                 outlined(d, (xs, yy + math.sin(t * 8) * 6), snd, font(fs * p), COL["yellow"] if not rev else (255, 255, 255), sw=max(1, int(11 * p)))
         if rev:
             banner(d, L, name, t - b["reveal"], y=ys - (0 if L.v else 0), size=140 if L.v else 120, col=COL[ANIMAL_COL[ak]])
+    elif kind == "fruit":  # ¿qué fruta es? / ¿de qué color es?: ("scene", "fruit", fruta, "guess"|"color", "TEXTO", color) + qmark + reveal
+        fk, mode, lab, cn = b["args"][0], b["args"][1], b["args"][2], b["args"][3]
+        cx = (L.stage[0] + L.stage[2]) / 2; cy = (L.stage[1] + L.stage[3]) / 2 + (50 if not L.v else 80)
+        sz = 500 if not L.v else 720
+        rev = b["reveal"] is not None and t >= b["reveal"]
+        bob = math.sin(t * 2.5) * 6; rot = math.sin(t * 2) * 4
+        if not rev:
+            if mode == "guess":
+                key = ("sil", fk, sz)
+                if key not in _sp: _sp[key] = silhouette(sprite(fk, sz))
+                paste_c(im, _sp[key], cx, cy + bob, elastic(bt / 0.5), rot)
+                if bt > 0.4: outlined(d, (cx, cy + 10 + math.sin(t * 6) * 8), "?", font(240), (255, 255, 255), sw=12)
+            else:
+                paste_c(im, sprite(fk, sz, gray=True), cx, cy + bob, elastic(bt / 0.5), rot)
+        else:
+            rt = t - b["reveal"]
+            paste_c(im, sprite(fk, sz), cx, cy + bob, (0.85 + 0.15 * elastic(rt / 0.5)) * (1 + 0.05 * math.sin(t * 4)), rot)
+            if rt < 1.2:
+                for k in range(10):
+                    a = k * 36 + rt * 90; rr = 200 + rt * 260
+                    d.polygon(star_pts(cx + rr * math.cos(math.radians(a)), cy + rr * math.sin(math.radians(a)), 26 * (1.2 - rt), 10 * (1.2 - rt)), fill=RAINBOW[k])
+            banner(d, L, lab, rt, size=130 if len(lab) <= 10 else 105, col=COL[cn])
+        if q_on(b, t) and mode == "color": qmark(d, L, t)
+        elif q_on(b, t) and bt > 0.4: outlined(d, (L.W / 2, L.num_c[1] + math.sin(t * 6) * 10), "¿QUÉ FRUTA ES?", font(90 if not L.v else 76), COL["yellow"], sw=10)
+    elif kind == "bowl":  # ensalada de frutas: ("scene", "bowl", [frutas]) + pop i (cae la fruta i) + confetti
+        objs = b["args"][0]; n = len(objs)
+        bx = L.W * (0.52 if not L.v else 0.5); top = L.H * (0.60 if not L.v else 0.56); bw = 330 if not L.v else 400; bh = 250 if not L.v else 290
+        banner(d, L, "¡ENSALADA DE FRUTAS!", bt, y=L.num_c[1] - (10 if not L.v else -60), size=96 if not L.v else 70, col=COL["orange"])
+        shown = dict(b["pops"]); fs = 220 if not L.v else 250
+        front = [k for k in range(n) if k % 2 == 0]; back = [k for k in range(n) if k % 2 == 1]; slots = [None] * n
+        for row, ks, yy in ((0, front, top - 75), (1, back, top - 175)):
+            for j, k in enumerate(ks):
+                span = bw * (1.3 if row == 0 else 0.95); m = len(ks)
+                slots[k] = (bx + (j - (m - 1) / 2) * (span / max(1, m - 1)), yy - (25 if row == 1 and j == (m - 1) / 2 else 0))
+        order = sorted(range(n), key=lambda k: slots[k][1])
+        for k in order:
+            i = k + 1
+            if i not in shown or t < shown[i]: continue
+            ft = t - shown[i]; tx, ty = slots[k]
+            p = clamp(ft / 0.45); y = ty - (1 - p) ** 2 * 650
+            sq = 1 + (0.12 * math.sin(min(1, (ft - 0.45) / 0.3) * math.pi) if ft > 0.45 else 0)
+            paste_c(im, sprite(objs[k], fs), tx, y + (math.sin(t * 3 + k) * 3 if p >= 1 else 0), sq, (k - n / 2) * 6)
+        d.chord([bx - bw, top - bh, bx + bw, top + bh], 0, 180, fill=(255, 255, 255), outline=COL["dark"], width=8)
+        d.chord([bx - bw * 0.93, top - bh * 0.93 + 40, bx + bw * 0.93, top + bh * 0.93 - 10], 10, 170, fill=COL["cyan"])
+        for k in range(7):
+            x = bx - bw * 0.7 + k * bw * 0.233; d.ellipse([x - 16, top + 70 - 16, x + 16, top + 70 + 16], fill=COL["yellow"])
+        d.rounded_rectangle([bx - bw - 14, top - 14, bx + bw + 14, top + 14], radius=14, fill=(255, 255, 255), outline=COL["dark"], width=7)
+        d.rounded_rectangle([bx - bw * 0.35, top + bh - 8, bx + bw * 0.35, top + bh + 26], radius=12, fill=(255, 255, 255), outline=COL["dark"], width=7)
+    elif kind == "freview":  # repaso de frutas: ("scene", "freview", [(fruta, "NOMBRE")...]) + rpop i + confetti
+        items = b["args"][0]; n = len(items); sz = 200 if not L.v else 230
+        box = (L.stage[0], L.stage[1] - 20, L.stage[2], L.stage[3] - 80) if not L.v else (L.stage[0], L.stage[1] - 60, L.stage[2], L.stage[3] + 80)
+        pos = grid_positions(n, box, sz) if not L.v else [(L.W * (0.2 + 0.3 * (k % 3)), box[1] + 150 + 270 * (k // 3)) for k in range(n)]
+        for i, tt in b["rpops"]:
+            if t < tt: continue
+            fk, nm = items[i - 1]; x, y = pos[i - 1]; y += math.sin(t * 3 + i) * 6
+            paste_c(im, sprite(fk, sz), x, y, elastic((t - tt) / 0.5), math.sin(t * 2 + i) * 4)
+            if t - tt > 0.3: outlined(d, (x, y + sz * 0.56), nm, font(40 if not L.v else 46), (255, 255, 255), sw=7)
+        if b["confetti"] and t >= b["confetti"]: confetti(d, L, t - b["confetti"])
     elif kind == "bye":
         banner(d, L, "¡ADIÓS!", bt, size=160, col=COL["orange"])
-    if kind in ("card", "size", "bye", "animal") and b["confetti"] and t >= b["confetti"]: confetti(d, L, t - b["confetti"])
+    if kind in ("card", "size", "bye", "animal", "fruit", "bowl") and b["confetti"] and t >= b["confetti"]: confetti(d, L, t - b["confetti"])
     # ----- personajes -----
     tw = env if who == "tula" else 0.0; pw_ = env if who == "pipo" else 0.0
     tsp = draw_tula(t, tw, danc); psp = draw_pipo(t, pw_, danc)
