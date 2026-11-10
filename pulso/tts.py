@@ -27,6 +27,8 @@ PRON = [
     (r"\bGLM 5\.2\b", "ye ele eme cinco punto dos"), (r"\bMETR\b", "Míter"), (r"\bRedwood Research\b", "Réduud Ríserch"),
     (r"\bsoftware\b", "sóftuer"), (r"\bhackear\b", "jaquear"), (r"\bhackers\b", "jákers"), (r"\bhackeo\b", "jaqueo"),
     (r"\bLas Vegas\b", "Las Végas"),
+    (r"\b1986\b", "mil novecientos ochenta y seis"), (r"15\.000 millones", "quince mil millones"), (r"\b44\b", "cuarenta y cuatro"),
+    (r"\b96\b", "noventa y seis"), (r"\b78\b", "setenta y ocho"), (r"\b3D\b", "tres dé"), (r"\bClaude\b", "Clod"), (r"\bAnthropic\b", "Antrópic"),
     (r"«|»|\"", ""),
 ]
 

@@ -190,6 +190,16 @@ def icon(d, kind, cx, cy, r, col=None, a=255):
             pts.append((cx + r * 0.82 * math.sin(th) * math.sin(th / 2), cy - r * 1.05 * math.cos(th) * 1.0 + r * 0.1))
         d.polygon(pts, fill=col)
         d.ellipse([cx - r * 0.42, cy + r * 0.2, cx - r * 0.2, cy + r * 0.55], fill=rgba(C["text"], a * 0.6))
+    elif kind == "vault":
+        # cápsula tipo "bóveda": barril ovalado con costillas y tapas
+        rrect(d, (cx - r * 1.25, cy - r * 0.62, cx + r * 1.25, cy + r * 0.62), r * 0.6, col)
+        for k in range(-3, 4):
+            x = cx + k * r * 0.3
+            hh = r * 0.62 * math.sqrt(max(0.0, 1 - (k * 0.3 / 1.3) ** 2)) * 0.82
+            d.line([(x, cy - hh), (x, cy + hh)], fill=dark, width=max(2, int(r * 0.05)))
+        d.line([(cx - r * 1.1, cy), (cx + r * 1.1, cy)], fill=dark, width=max(2, int(r * 0.07)))
+        for sx in (-1, 1):
+            d.ellipse([cx + sx * r * 1.33 - r * 0.14, cy - r * 0.14, cx + sx * r * 1.33 + r * 0.14, cy + r * 0.14], fill=col)
     elif kind == "bolt":
         d.polygon([(cx + r * 0.25, cy - r * 1.1), (cx - r * 0.65, cy + r * 0.15), (cx - r * 0.02, cy + r * 0.15),
                    (cx - r * 0.3, cy + r * 1.1), (cx + r * 0.65, cy - r * 0.2), (cx + r * 0.02, cy - r * 0.2)], fill=col)

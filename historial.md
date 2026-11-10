@@ -16,3 +16,4 @@ fecha · canal · título · ID de YouTube
 2026-11-09 · Peque Planeta · auto · largo · ¡Aprendemos las frutas con Tula y Pipo! 🍎 Manzana, plátano, uvas y más | Para niños · 5Xxi0DDidRU
 2026-11-09 · Pulso IA · auto · largo · Las IA de OpenAI escaparon de su prueba, hackearon otra empresa… y armaron un foro secreto · RdarX7wMX6M
 2026-11-10 · Peque Planeta · auto · short · ¿Cuántos hay? ⭐ ¡A contar globos, estrellas y peces con Tula y Pipo! #shorts · Il4a4s0PrQo
+2026-11-10 · Pulso IA · auto · short · Hay algo en tus células que nadie entiende desde 1986… y una IA buscó pistas #shorts · PRlFAXCST_8
