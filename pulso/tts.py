@@ -13,6 +13,12 @@ GAP_SECT = 1.10   # pausa entre secciones
 
 # Pronunciación para el TTS (el texto en pantalla no cambia)
 PRON = [
+    (r"Builder\.ai", "Bílder Ei Ai"), (r"Engineer\.ai", "Inyiníer Ei Ai"), (r"Sachin Dev Duggal", "Sáchin Dev Dúgal"), (r"\bDuggal\b", "Dúgal"),
+    (r"\bWall Street Journal\b", "Guol Strit Yérnal"), (r"\bQatar\b", "Catar"), (r"\bFast Company\b", "Fast Cómpani"), (r"\bEY\b", "i guai"),
+    (r"\bManpreet Ratia\b", "Mánprit Rátia"), (r"\bRatia\b", "Rátia"), (r"\bFinancial Times\b", "Fainánshal Taims"), (r"\bViola Credit\b", "Viola Crédit"),
+    (r"\bLinkedIn\b", "Linkedín"), (r"\bred social X\b", "red social equis"), (r"\bapps\b", "aps"), (r"\bapp\b", "ap"),
+    (r"\bstartups\b", "estártaps"), (r"\bstartup\b", "estártap"), (r"\bmarketing\b", "márketing"), (r"\bGPT\b", "yi pi ti"),
+    (r"\bVietnam\b", "Vietnám"), (r"\bbot\b", "bot"),
     (r"\bOpenAI\b", "Oupen Ei Ai"), (r"\bChatGPT\b", "Chat yi pi ti"),
     (r"\bIA\b", "i a"), (r"\bWhatsApp\b", "Guatsap"), (r"\bUber\b", "Úber"),
     (r"Siemiatkowski", "Shemiatkovski"), (r"Gergely Orosz", "Guérguei Orosh"),

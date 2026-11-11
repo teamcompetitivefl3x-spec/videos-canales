@@ -203,6 +203,17 @@ def icon(d, kind, cx, cy, r, col=None, a=255):
     elif kind == "bolt":
         d.polygon([(cx + r * 0.25, cy - r * 1.1), (cx - r * 0.65, cy + r * 0.15), (cx - r * 0.02, cy + r * 0.15),
                    (cx - r * 0.3, cy + r * 1.1), (cx + r * 0.65, cy - r * 0.2), (cx + r * 0.02, cy - r * 0.2)], fill=col)
+    elif kind == "search":
+        # lupa
+        d.ellipse([cx - r * 0.9, cy - r * 0.9, cx + r * 0.4, cy + r * 0.4], outline=col, width=max(3, int(r * 0.2)))
+        d.line([(cx + r * 0.25, cy + r * 0.25), (cx + r * 0.95, cy + r * 0.95)], fill=col, width=max(4, int(r * 0.3)))
+    elif kind == "code":
+        # </> dentro de una ventana
+        rrect(d, (cx - r * 1.1, cy - r * 0.8, cx + r * 1.1, cy + r * 0.8), r * 0.22, col)
+        w_ = max(3, int(r * 0.14))
+        d.line([(cx - r * 0.35, cy - r * 0.35), (cx - r * 0.7, cy), (cx - r * 0.35, cy + r * 0.35)], fill=dark, width=w_, joint="curve")
+        d.line([(cx + r * 0.35, cy - r * 0.35), (cx + r * 0.7, cy), (cx + r * 0.35, cy + r * 0.35)], fill=dark, width=w_, joint="curve")
+        d.line([(cx + r * 0.12, cy - r * 0.45), (cx - r * 0.12, cy + r * 0.45)], fill=dark, width=w_)
 
 # ---------- escenas ----------
 class Ctx:
