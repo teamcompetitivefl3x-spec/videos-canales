@@ -301,6 +301,109 @@ def fruit_draw(d, kind, c, r, W, K):
         d.line([(c, c - r * 0.82), (c + r * 0.1, c - r * 1.18)], fill=K(STEM), width=int(r * 0.09))
         _leaf(d, K, c + r * 0.38, c - r * 1.05, r * 0.3, r * 0.14, -15)
 
+# ---------- vocales (episodio de las vocales) ----------
+VOWELS = ("A", "E", "I", "O", "U")
+VCOL = {"A": "red", "E": "blue", "I": "green", "O": "orange", "U": "purple"}
+VOWEL_OBJS = ("abeja", "arbol", "elefante", "iglu", "isla", "oso", "uno")
+
+def letter_draw(im, ch, W, K):
+    """Letra grande con borde blanco y sombra (kind 'L_A', 'L_a'...)."""
+    col = K(COL[VCOL.get(ch.upper(), "red")]); d = ImageDraw.Draw(im)
+    f = font(W * (0.86 if ch.isupper() else 0.95)); c = W / 2
+    d.text((c + W * 0.025, c + W * 0.035), ch, font=f, fill=(40, 40, 60, 110), anchor="mm", stroke_width=int(W * 0.045), stroke_fill=(40, 40, 60, 110))
+    d.text((c, c), ch, font=f, fill=col, anchor="mm", stroke_width=int(W * 0.045), stroke_fill=(255, 255, 255))
+
+def vowel_obj_draw(im, d, kind, c, r, W, K):
+    lw = max(2, int(W * 0.012)); dark = COL["dark"]
+    if kind == "abeja":
+        for sx, a in ((-0.15, -25), (0.3, 20)):   # alas
+            d.ellipse([c + r * sx - r * 0.38, c - r * 1.0, c + r * sx + r * 0.38, c - r * 0.25], fill=K((205, 240, 255)) + (220,), outline=K((140, 200, 235)), width=lw)
+        body = Image.new("RGBA", im.size, (0, 0, 0, 0)); bd = ImageDraw.Draw(body)
+        box = [c - r * 0.8, c - r * 0.55, c + r * 0.95, c + r * 0.6]
+        bd.ellipse(box, fill=K((255, 205, 40)))
+        for x in (0.05, 0.45):
+            bd.rectangle([c + r * x, c - r * 0.7, c + r * (x + 0.2), c + r * 0.7], fill=K(dark))
+        mask = Image.new("L", im.size, 0); ImageDraw.Draw(mask).ellipse(box, fill=255)
+        im.paste(body, (0, 0), mask); d = ImageDraw.Draw(im)
+        d.ellipse(box, outline=K((60, 50, 40)), width=lw)
+        d.polygon([(c + r * 0.92, c - r * 0.08), (c + r * 1.22, c + r * 0.03), (c + r * 0.92, c + r * 0.14)], fill=K(dark))
+        hx = c - r * 0.78
+        for sx in (-1, 1):   # antenas
+            d.line([(hx + sx * r * 0.12, c - r * 0.38), (hx + sx * r * 0.28, c - r * 0.82)], fill=K(dark), width=lw)
+            d.ellipse([hx + sx * r * 0.28 - r * 0.07, c - r * 0.89, hx + sx * r * 0.28 + r * 0.07, c - r * 0.75], fill=K(dark))
+        d.ellipse([hx - r * 0.45, c - r * 0.45, hx + r * 0.45, c + r * 0.42], fill=K((255, 215, 70)), outline=K((60, 50, 40)), width=lw)
+        _eyes(d, hx, c - r * 0.08, r, dx=0.17, s=0.1)
+        d.arc([hx - r * 0.15, c + r * 0.02, hx + r * 0.15, c + r * 0.24], 20, 160, fill=K(dark), width=lw)
+        _cheeks(d, hx, c + r * 0.12, r, 0.3)
+    elif kind == "elefante":
+        g = K((165, 175, 200)); gd = K((125, 135, 165))
+        for sx in (-1, 1):   # orejas grandes
+            d.ellipse([c + sx * r * 0.78 - r * 0.55, c - r * 0.85, c + sx * r * 0.78 + r * 0.55, c + r * 0.35], fill=g, outline=gd, width=lw)
+            d.ellipse([c + sx * r * 0.82 - r * 0.36, c - r * 0.65, c + sx * r * 0.82 + r * 0.36, c + r * 0.15], fill=K((250, 175, 190)))
+        d.ellipse([c - r * 0.68, c - r * 0.8, c + r * 0.68, c + r * 0.55], fill=g, outline=gd, width=lw)
+        tr = [(c + r * 0.0, c + r * 0.15), (c + r * 0.02, c + r * 0.55), (c + r * 0.12, c + r * 0.85), (c + r * 0.32, c + r * 1.0), (c + r * 0.48, c + r * 0.92)]
+        d.line(tr, fill=gd, width=int(r * 0.34), joint="curve"); d.line(tr, fill=g, width=int(r * 0.26), joint="curve")
+        for (x, y) in tr[1:4]:
+            d.arc([x - r * 0.1, y - r * 0.03, x + r * 0.1, y + r * 0.05], 20, 160, fill=gd, width=max(1, lw // 2))
+        _eyes(d, c, c - r * 0.25, r, dx=0.3, s=0.14)
+        _cheeks(d, c, c + r * 0.08, r, 0.45)
+        for sx in (-1, 1):   # colmillos chiquitos
+            d.polygon([(c + sx * r * 0.2, c + r * 0.35), (c + sx * r * 0.33, c + r * 0.38), (c + sx * r * 0.3, c + r * 0.55)], fill=K((255, 252, 240)))
+    elif kind == "iglu":
+        d.ellipse([c - r * 1.3, c + r * 0.6, c + r * 1.3, c + r * 1.05], fill=K((235, 245, 255)))
+        cy0 = c + r * 0.8; rx = r * 1.1; ry = r * 1.25
+        d.pieslice([c - rx, cy0 - ry, c + rx, cy0 + ry], 180, 360, fill=K((240, 248, 255)), outline=K((150, 195, 230)), width=lw * 2)
+        rows = 5
+        for k in range(1, rows):
+            y = cy0 - ry * k / rows; hw = rx * math.sqrt(max(0, 1 - ((cy0 - y) / ry) ** 2))
+            d.line([(c - hw, y), (c + hw, y)], fill=K((170, 205, 235)), width=lw)
+        for k in range(rows):
+            y0, y1 = cy0 - ry * k / rows, cy0 - ry * (k + 1) / rows; hw = rx * math.sqrt(max(0, 1 - ((cy0 - y0) / ry) ** 2))
+            nb = max(2, int(5 - k)); off = 0.5 if k % 2 else 0
+            for j in range(nb):
+                x = c - hw + (j + off + 0.5) * (2 * hw / (nb + 0.5))
+                if abs(x - c) < hw * 0.95: d.line([(x, y0), (x, y1 + 2)], fill=K((170, 205, 235)), width=lw)
+        d.pieslice([c - r * 0.38, cy0 - r * 0.75, c + r * 0.38, cy0 + r * 0.75], 180, 360, fill=K((60, 110, 190)))
+        d.rectangle([c - r * 0.38, cy0 - r * 0.02, c + r * 0.38, cy0 + r * 0.04], fill=K((60, 110, 190)))
+    elif kind == "oso":
+        b = K((165, 105, 60)); bl = K((230, 190, 145))
+        for sx in (-1, 1):
+            d.ellipse([c + sx * r * 0.68 - r * 0.3, c - r * 1.0, c + sx * r * 0.68 + r * 0.3, c - r * 0.4], fill=b)
+            d.ellipse([c + sx * r * 0.68 - r * 0.16, c - r * 0.86, c + sx * r * 0.68 + r * 0.16, c - r * 0.54], fill=bl)
+        d.ellipse([c - r * 0.92, c - r * 0.85, c + r * 0.92, c + r * 0.85], fill=b)
+        d.ellipse([c - r * 0.42, c + r * 0.0, c + r * 0.42, c + r * 0.62], fill=bl)
+        _eyes(d, c, c - r * 0.25, r, dx=0.33, s=0.14)
+        d.ellipse([c - r * 0.17, c + r * 0.08, c + r * 0.17, c + r * 0.3], fill=K(dark))
+        d.ellipse([c - r * 0.08, c + r * 0.11, c + r * 0.0, c + r * 0.17], fill=(255, 255, 255, 170))
+        d.line([(c, c + r * 0.3), (c, c + r * 0.42)], fill=K(dark), width=lw)
+        d.arc([c - r * 0.2, c + r * 0.3, c, c + r * 0.52], 0, 180, fill=K(dark), width=lw)
+        d.arc([c, c + r * 0.3, c + r * 0.2, c + r * 0.52], 0, 180, fill=K(dark), width=lw)
+        _cheeks(d, c, c + r * 0.12, r, 0.58)
+    elif kind == "arbol":
+        d.rounded_rectangle([c - r * 0.18, c + r * 0.1, c + r * 0.18, c + r * 1.2], radius=int(r * 0.06), fill=K((140, 90, 50)))
+        d.polygon([(c - r * 0.18, c + r * 1.2), (c - r * 0.42, c + r * 1.25), (c + r * 0.42, c + r * 1.25), (c + r * 0.18, c + r * 1.2)], fill=K((140, 90, 50)))
+        for (x, y, rr) in ((-0.5, -0.1, 0.5), (0.5, -0.1, 0.5), (0, -0.55, 0.6), (-0.3, 0.25, 0.42), (0.3, 0.25, 0.42), (0, 0.0, 0.5)):
+            d.ellipse([c + r * x - r * rr, c + r * y - r * rr, c + r * x + r * rr, c + r * y + r * rr], fill=K((85, 180, 75)))
+        for (x, y, rr) in ((-0.25, -0.65, 0.22), (0.35, -0.35, 0.18)):
+            d.ellipse([c + r * x - r * rr, c + r * y - r * rr, c + r * x + r * rr, c + r * y + r * rr], fill=K((130, 210, 110)))
+        for (x, y) in ((-0.5, -0.05), (0.15, -0.6), (0.55, 0.05), (-0.1, 0.3), (0.3, -0.15)):
+            d.ellipse([c + r * x - r * 0.09, c + r * y - r * 0.09, c + r * x + r * 0.09, c + r * y + r * 0.09], fill=K((235, 60, 60)))
+    elif kind == "isla":
+        d.ellipse([c - r * 1.35, c + r * 0.5, c + r * 1.35, c + r * 1.25], fill=K((70, 160, 235)))
+        for k in range(3):
+            x = c - r * 0.9 + k * r * 0.9; d.arc([x - r * 0.18, c + r * 0.95, x + r * 0.18, c + r * 1.15], 200, 340, fill=(255, 255, 255), width=lw)
+        d.chord([c - r * 0.95, c + r * 0.35, c + r * 0.95, c + r * 1.05], 180, 360, fill=K((250, 215, 120)))
+        tr = [(c - r * 0.05, c + r * 0.62), (c + r * 0.02, c + r * 0.2), (c + r * 0.15, c - r * 0.2), (c + r * 0.3, c - r * 0.5)]
+        d.line(tr, fill=K((150, 100, 55)), width=int(r * 0.16), joint="curve")
+        tx, ty = tr[-1]
+        for ang in (-160, -120, -60, -20, 30, 170):
+            a = math.radians(ang); _leaf(d, K, tx + r * 0.36 * math.cos(a), ty + r * 0.22 * math.sin(a) + r * 0.05, r * 0.42, r * 0.13, ang)
+        for (x, y) in ((0.2, -0.38), (0.38, -0.36)):
+            d.ellipse([c + r * x - r * 0.08, c + r * y - r * 0.08, c + r * x + r * 0.08, c + r * y + r * 0.08], fill=K((120, 80, 40)))
+    elif kind == "uno":
+        d.ellipse([c - r, c - r, c + r, c + r], fill=K(COL["purple"]), outline=(255, 255, 255), width=int(W * 0.03))
+        d.text((c, c + r * 0.05), "1", font=font(r * 1.5), fill=(255, 255, 255), anchor="mm", stroke_width=int(W * 0.015), stroke_fill=K(dark))
+
 def silhouette(spr, col=(120, 110, 170)):
     s = Image.new("RGBA", spr.size, col + (255,)); s.putalpha(spr.getchannel("A")); return s
 
@@ -428,6 +531,10 @@ def obj_sprite(kind, size=220, color=None, gray=False, face=False):
         animal_face(d, kind, c, r, W, C)
     elif kind in FRUITS:
         fruit_draw(d, kind, c, r, W, K)
+    elif kind.startswith("L_"):
+        letter_draw(im, kind[2:], W, K)
+    elif kind in VOWEL_OBJS:
+        vowel_obj_draw(im, d, kind, c, r, W, K)
     elif kind == "cohete":
         d.polygon([(c, c - r * 1.4), (c - r * 0.45, c - r * 0.5), (c + r * 0.45, c - r * 0.5)], fill=COL["red"])
         d.rounded_rectangle([c - r * 0.45, c - r * 0.6, c + r * 0.45, c + r * 0.9], radius=int(r * 0.2), fill=(240, 240, 248))
@@ -604,6 +711,17 @@ def numeral_disc(im, d, L, n, tt, word=True, cx=None, cy=None, r=110):
         a = ease((tt - 0.25) / 0.3)
         outlined(d, (cx, cy + r + 52), WORDS[n].upper(), font(70), (255, 255, 255), sw=9)
 
+def big_word(d, L, word, ch, tt, y, size):
+    """Palabra grande con la primera letra en el color de la vocal."""
+    p = elastic(tt / 0.6)
+    if p <= 0: return
+    f = font(size * p); ws = [f.getlength(c) for c in word]; gap = 6 * p; tot = sum(ws) + gap * (len(word) - 1)
+    x = L.W / 2 + 30 - tot / 2
+    for k, c in enumerate(word):
+        col = COL[VCOL.get(ch, "red")] if k == 0 else (255, 255, 255)
+        outlined(d, (x + ws[k] / 2, y + math.sin(tt * 5 + k) * 6), c, f, col, sw=max(1, int(11 * p)))
+        x += ws[k] + gap
+
 def qmark(d, L, t):
     y = L.num_c[1] + math.sin(t * 6) * 12
     outlined(d, (L.num_c[0], y), "?", font(200), COL["yellow"], sw=12)
@@ -639,7 +757,7 @@ def draw_frame(L, scen, t):
     im = scen.frame(t, night); d = ImageDraw.Draw(im)
     who, env = speaking(t)
     danc = 1.0 if (kind == "dance" and b["dancing"] and t >= b["dancing"]) or kind in ("title", "end") else 0.0
-    if kind in ("review", "sreview", "freview", "bowl") and b["confetti"] and t >= b["confetti"]: danc = 1.0
+    if kind in ("review", "sreview", "freview", "bowl", "lreview") and b["confetti"] and t >= b["confetti"]: danc = 1.0
     # ----- contenido -----
     if kind == "title" or kind == "end":
         txt1, txt2 = TITLE if kind == "title" else ("¡HASTA LA", "PRÓXIMA!")
@@ -780,7 +898,10 @@ def draw_frame(L, scen, t):
         if len(b["args"]) > 2:   # objetos opcionales que aparecen debajo del cartel
             objs = b["args"][2]; sz = 300 if L.v else 240
             box = (L.stage[0], L.stage[1] + (120 if L.v else 140), L.stage[2], L.stage[3] + (40 if L.v else 0))
-            for k, (x, y) in enumerate(grid_positions(len(objs), box, sz)):
+            gp = grid_positions(len(objs), box, sz)
+            if all(o.startswith("L_") for o in objs):   # letras: una sola fila
+                sz = 230; gp = [(L.W / 2 + 30 + (k - (len(objs) - 1) / 2) * 175, (L.stage[1] + L.stage[3]) / 2 + 120) for k in range(len(objs))]
+            for k, (x, y) in enumerate(gp):
                 paste_c(im, sprite(objs[k], sz), x, y + math.sin(t * 3 + k) * 8, elastic((bt - 0.5 - k * 0.25) / 0.45), math.sin(t * 2 + k) * 5)
     elif kind == "shape":  # forma grande que se dibuja: trace -> fill (cara) -> reveal (nombre) -> side i (lados/puntas)
         sk = b["args"][0]; cx = (L.stage[0] + L.stage[2]) / 2; cy = (L.stage[1] + L.stage[3]) / 2 + (40 if not L.v else 60)
@@ -981,9 +1102,92 @@ def draw_frame(L, scen, t):
             paste_c(im, sprite(fk, sz), x, y, elastic((t - tt) / 0.5), math.sin(t * 2 + i) * 4)
             if t - tt > 0.3: outlined(d, (x, y + sz * 0.56), nm, font(40 if not L.v else 46), (255, 255, 255), sw=7)
         if b["confetti"] and t >= b["confetti"]: confetti(d, L, t - b["confetti"])
+    elif kind == "letter":  # vocal grande: ("scene", "letter", "A") + pop 2 (minúscula)
+        ch = b["args"][0]; cx = (L.stage[0] + L.stage[2]) / 2 + 20; cy = (L.stage[1] + L.stage[3]) / 2 + 40
+        low = dict(b["pops"]).get(2)
+        sh = ease((t - low) / 0.5) if (low is not None and t >= low) else 0.0
+        paste_c(im, sprite("L_" + ch, 560), cx - 200 * sh, cy + math.sin(t * 3) * 10, elastic(bt / 0.6), math.sin(t * 2.2) * 4)
+        if sh > 0:
+            paste_c(im, sprite("L_" + ch.lower(), 470), cx + 230, cy + 30 + math.sin(t * 3 + 1) * 10, elastic((t - low) / 0.6), math.sin(t * 2.2 + 1) * 4)
+        for k in range(6):   # estrellitas alrededor
+            a = t * 0.8 + k * math.pi / 3; rr = 330 + 20 * math.sin(t * 2 + k)
+            x, y = cx + rr * 1.25 * math.cos(a), cy + rr * 0.75 * math.sin(a)
+            if L.stage[0] - 40 < x < L.stage[2] + 20 and bt > 0.6:
+                d.polygon(star_pts(x, y, 22, 9), fill=RAINBOW[k])
+    elif kind == "word":  # palabra que empieza con la vocal: ("scene", "word", objeto, "ABEJA", "A") + qmark + reveal
+        ok, wd, ch = b["args"][0], b["args"][1], b["args"][2]
+        cx = (L.stage[0] + L.stage[2]) / 2 + 20; cy = (L.stage[1] + L.stage[3]) / 2 + 70
+        rev = b["reveal"] is not None and t >= b["reveal"]
+        sc = elastic(bt / 0.5) * (1 + (0.05 * math.sin(t * 4) if rev else 0))
+        paste_c(im, sprite(ok, 470), cx, cy + math.sin(t * 2.5) * 7, sc, math.sin(t * 2) * 4)
+        if rev:
+            rt = t - b["reveal"]
+            if rt < 1.2:
+                for k in range(10):
+                    a = k * 36 + rt * 90; rr = 190 + rt * 250
+                    d.polygon(star_pts(cx + rr * math.cos(math.radians(a)), cy + rr * math.sin(math.radians(a)), 26 * (1.2 - rt), 10 * (1.2 - rt)), fill=RAINBOW[k])
+            big_word(d, L, wd, ch, rt, L.num_c[1] - 5, 130 if len(wd) <= 6 else 112)
+        elif q_on(b, t):
+            outlined(d, (L.W / 2 + 20, L.num_c[1] + math.sin(t * 6) * 10), "¿QUÉ ES?", font(110), COL["yellow"], sw=11)
+    elif kind == "vstart":  # ¿con qué vocal empieza?: ("scene", "vstart", objeto, "OSO", "O") + qmark + reveal
+        ok, wd, ch = b["args"][0], b["args"][1], b["args"][2]
+        cx = (L.stage[0] + L.stage[2]) / 2 + 30
+        rev = b["reveal"] is not None and t >= b["reveal"]
+        paste_c(im, sprite(ok, 330), cx, 375 + math.sin(t * 2.5) * 6, elastic(bt / 0.5), math.sin(t * 2) * 3)
+        for k, v in enumerate(VOWELS):
+            x = cx + 40 + (k - 2) * 150; y = 640 + math.sin(t * 3 + k) * 5; tt = bt - 0.4 - k * 0.15
+            if tt < 0: continue
+            sc = elastic(tt / 0.45); al = 1.0
+            if rev:
+                if v == ch:
+                    rt = t - b["reveal"]; sc *= 1.25 + 0.08 * math.sin(rt * 7)
+                    rr = 92 + 5 * math.sin(t * 6); d.ellipse([x - rr, y - rr, x + rr, y + rr], fill=(255, 255, 255, 230), outline=COL["yellow"], width=12)
+                else: al = 0.35
+            paste_c(im, sprite("L_" + v, 175), x, y, sc, 0, alpha=al)
+        if rev: big_word(d, L, wd, ch, t - b["reveal"], L.num_c[1] - 10, 120)
+        else: outlined(d, (L.W / 2 + 30, L.num_c[1] - 10), "¿CON QUÉ VOCAL EMPIEZA?", font(70), COL["yellow"], sw=9)
+    elif kind == "lfind":  # ¿dónde está la...?: ("scene", "lfind", ["E","O","A"], idx, "A") + qmark + reveal
+        seq, idx, ch = b["args"][0], b["args"][1], b["args"][2]
+        cx = (L.stage[0] + L.stage[2]) / 2 + 30
+        rev = b["reveal"] is not None and t >= b["reveal"]
+        outlined(d, (L.W / 2 + 30, L.num_c[1] - 10), f"¿DÓNDE ESTÁ LA {ch}?", font(90), COL["yellow"], sw=10)
+        for k, v in enumerate(seq):
+            x = cx + 10 + (k - (len(seq) - 1) / 2) * 300; y = 490 + math.sin(t * 2.6 + k) * 8; tt = bt - k * 0.25
+            if tt < 0: continue
+            sc = elastic(tt / 0.5); al = 1.0
+            if rev:
+                if k == idx:
+                    rt = t - b["reveal"]; sc *= 1.12 + 0.08 * math.sin(rt * 6)
+                    rr = 150 + 6 * math.sin(t * 6); d.ellipse([x - rr, y - rr, x + rr, y + rr], fill=(255, 255, 255, 200), outline=COL["yellow"], width=16)
+                else: al = 0.4
+            paste_c(im, sprite("L_" + v, 300), x, y, sc, math.sin(t * 2 + k) * 4, alpha=al)
+    elif kind == "lpattern":  # ¿qué vocal falta?: ("scene", "lpattern", ["A","E","I","O","U"], idx) + fill
+        seq, miss = b["args"][0], b["args"][1]
+        cx = (L.stage[0] + L.stage[2]) / 2 + 30
+        outlined(d, (L.W / 2 + 30, L.num_c[1] - 10), "¿QUÉ VOCAL FALTA?", font(96), COL["purple"], sw=10)
+        for k, v in enumerate(seq):
+            x = cx - 10 + (k - 2) * 170; y = 480 + math.sin(t * 2.6 + k) * 6; tt = bt - k * 0.22
+            if tt < 0: continue
+            if k == miss and not (b["fill"] is not None and t >= b["fill"]):
+                p = elastic(tt / 0.6); h = 70 * p
+                d.rounded_rectangle([x - h, y - h * 1.2, x + h, y + h * 1.2], radius=int(h * 0.3) + 1, fill=(215, 215, 228), outline=(255, 255, 255), width=8)
+                outlined(d, (x, y + math.sin(t * 6) * 6), "?", font(max(1, h * 1.6)), (255, 255, 255), sw=6)
+            else:
+                st = (t - b["fill"]) if k == miss else tt
+                paste_c(im, sprite("L_" + v, 220), x, y, elastic(st / 0.45) * (1.15 if k == miss else 1.0))
+    elif kind == "lreview":  # repaso: ("scene", "lreview", [("A", "abeja", "ABEJA")...]) + rpop i + confetti
+        items = b["args"][0]; cx = (L.stage[0] + L.stage[2]) / 2 + 30
+        for i, tt in b["rpops"]:
+            if t < tt: continue
+            ch, ok, wd = items[i - 1]; x = cx + 40 + (i - 3) * 188; ph = math.sin(t * 3 + i) * 6
+            p = elastic((t - tt) / 0.5)
+            paste_c(im, sprite("L_" + ch, 230), x, 285 + ph, p)
+            paste_c(im, sprite(ok, 195), x, 515 + ph, elastic((t - tt - 0.25) / 0.5), math.sin(t * 2 + i) * 4)
+            if t - tt > 0.4: outlined(d, (x, 645 + ph), wd, font(38), (255, 255, 255), sw=6)
+        if b["confetti"] and t >= b["confetti"]: confetti(d, L, t - b["confetti"])
     elif kind == "bye":
         banner(d, L, "¡ADIÓS!", bt, size=160, col=COL["orange"])
-    if kind in ("card", "size", "bye", "animal", "fruit", "bowl") and b["confetti"] and t >= b["confetti"]: confetti(d, L, t - b["confetti"])
+    if kind in ("card", "size", "bye", "animal", "fruit", "bowl", "word", "letter") and b["confetti"] and t >= b["confetti"]: confetti(d, L, t - b["confetti"])
     # ----- personajes -----
     tw = env if who == "tula" else 0.0; pw_ = env if who == "pipo" else 0.0
     tsp = draw_tula(t, tw, danc); psp = draw_pipo(t, pw_, danc)

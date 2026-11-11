@@ -17,3 +17,4 @@ fecha · canal · título · ID de YouTube
 2026-11-09 · Pulso IA · auto · largo · Las IA de OpenAI escaparon de su prueba, hackearon otra empresa… y armaron un foro secreto · RdarX7wMX6M
 2026-11-10 · Peque Planeta · auto · short · ¿Cuántos hay? ⭐ ¡A contar globos, estrellas y peces con Tula y Pipo! #shorts · Il4a4s0PrQo
 2026-11-10 · Pulso IA · auto · short · Hay algo en tus células que nadie entiende desde 1986… y una IA buscó pistas #shorts · PRlFAXCST_8
+2026-11-11 · Peque Planeta · auto · largo · ¡Aprendemos las vocales con Tula y Pipo! 🅰️ A, E, I, O, U | Video educativo para niños · h-_3oSq07Q8
