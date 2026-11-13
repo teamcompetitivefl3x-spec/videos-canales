@@ -13,6 +13,12 @@ GAP_SECT = 1.10   # pausa entre secciones
 
 # Pronunciación para el TTS (el texto en pantalla no cambia)
 PRON = [
+    (r"\bNVIDIA\b", "Envidia"), (r"\bJensen Huang\b", "Yénsen Juang"), (r"\bHuang\b", "Juang"), (r"\bColette Kress\b", "Colét Kres"),
+    (r"\bHarvey Jones\b", "Járvei Yóuns"), (r"\bTSMC\b", "te ese eme ce"), (r"\bFable 5\.2\b", "Féibol cinco punto dos"),
+    (r"\bMythos 5\.2\b", "Mítos cinco punto dos"), (r"\bOpus 5\.5\b", "Óupus cinco punto cinco"), (r"\bGemini 4 Carbon\b", "Yémini cuatro Cárbon"),
+    (r"\bGemini 4 Argon\b", "Yémini cuatro Árgon"), (r"\bAl Jazeera\b", "Al Yasira"), (r"\bTechCrunch\b", "Tec Cranch"),
+    (r"\bWall Street\b(?! Journal)", "Guol Strit"), (r"\btokens\b", "tóquens"), (r"\btoken\b", "tóquen"), (r"\bCisco\b", "Sísco"),
+    (r"\bMicrosoft\b", "Máicrosoft"), (r"\bApple\b", "Ápol"),
     (r"Builder\.ai", "Bílder Ei Ai"), (r"Engineer\.ai", "Inyiníer Ei Ai"), (r"Sachin Dev Duggal", "Sáchin Dev Dúgal"), (r"\bDuggal\b", "Dúgal"),
     (r"\bWall Street Journal\b", "Guol Strit Yérnal"), (r"\bQatar\b", "Catar"), (r"\bFast Company\b", "Fast Cómpani"), (r"\bEY\b", "i guai"),
     (r"\bManpreet Ratia\b", "Mánprit Rátia"), (r"\bRatia\b", "Rátia"), (r"\bFinancial Times\b", "Fainánshal Taims"), (r"\bViola Credit\b", "Viola Crédit"),

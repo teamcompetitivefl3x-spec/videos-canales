@@ -19,3 +19,4 @@ fecha · canal · título · ID de YouTube
 2026-11-10 · Pulso IA · auto · short · Hay algo en tus células que nadie entiende desde 1986… y una IA buscó pistas #shorts · PRlFAXCST_8
 2026-11-11 · Peque Planeta · auto · largo · ¡Aprendemos las vocales con Tula y Pipo! 🅰️ A, E, I, O, U | Video educativo para niños · h-_3oSq07Q8
 2026-11-11 · Pulso IA · auto · largo · La IA de 1.500 millones que se derrumbó en semanas… y el rumor de los 700 ingenieros · 129cyftKMzQ
+2026-11-13 · Pulso IA · auto · largo · El CEO de NVIDIA renunció de golpe… y otras 4 noticias que sacuden la IA · T1Fj9bXQ0TY
