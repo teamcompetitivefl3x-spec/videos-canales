@@ -21,3 +21,4 @@ fecha · canal · título · ID de YouTube
 2026-11-11 · Pulso IA · auto · largo · La IA de 1.500 millones que se derrumbó en semanas… y el rumor de los 700 ingenieros · 129cyftKMzQ
 2026-11-13 · Pulso IA · auto · largo · El CEO de NVIDIA renunció de golpe… y otras 4 noticias que sacuden la IA · T1Fj9bXQ0TY
 2026-11-14 · Peque Planeta · auto · short · ¿Qué forma es? 🔺 ¡Adivina las formas con Tula y Pipo! #shorts · WuJdnJko_SQ
+2026-11-14 · Pulso IA · auto · short · Una aerolínea prohibió que la IA te compre pasajes… aunque tú lo apruebes #shorts · wy-w7-LIqlA
