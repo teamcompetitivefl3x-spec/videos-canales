@@ -1187,7 +1187,7 @@ def draw_frame(L, scen, t):
         if b["confetti"] and t >= b["confetti"]: confetti(d, L, t - b["confetti"])
     elif kind == "bye":
         banner(d, L, "¡ADIÓS!", bt, size=160, col=COL["orange"])
-    if kind in ("card", "size", "bye", "animal", "fruit", "bowl", "word", "letter") and b["confetti"] and t >= b["confetti"]: confetti(d, L, t - b["confetti"])
+    if kind in ("card", "size", "bye", "animal", "fruit", "bowl", "word", "letter", "shape", "spattern") and b["confetti"] and t >= b["confetti"]: confetti(d, L, t - b["confetti"])
     # ----- personajes -----
     tw = env if who == "tula" else 0.0; pw_ = env if who == "pipo" else 0.0
     tsp = draw_tula(t, tw, danc); psp = draw_pipo(t, pw_, danc)
