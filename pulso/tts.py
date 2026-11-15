@@ -13,6 +13,11 @@ GAP_SECT = 1.10   # pausa entre secciones
 
 # Pronunciación para el TTS (el texto en pantalla no cambia)
 PRON = [
+    (r"\bGPT-5\b", "yi pi ti cinco"), (r"\bSteven Schwartz\b", "Stíven Shuórts"), (r"\bSchwartz\b", "Shuórts"),
+    (r"\bKevin Castel\b", "Kévin Castél"), (r"\bDamien Charlotin\b", "Damián Sharlotán"), (r"\bAir Canada\b", "Er Cánada"),
+    (r"\bDeloitte\b", "Deloít"), (r"\bChris Rudge\b", "Kris Rach"), (r"\bAdam Kalai\b", "Ádam Kalái"), (r"\bKalai\b", "Kalái"),
+    (r"\bDeepSeek\b", "Dip Sik"), (r"\bLlama\b", "Lama"), (r"\bAlbert Einstein\b", "Álbert Áinstain"), (r"\bbenchmarks\b", "bénchmarks"),
+    (r"\bchatbots\b", "chátbots"), (r"\bchatbot\b", "chátbot"), (r"\bSídney\b", "Sídnei"), (r"\bAvianca\b", "Aviánca"),
     (r"\bNVIDIA\b", "Envidia"), (r"\bJensen Huang\b", "Yénsen Juang"), (r"\bHuang\b", "Juang"), (r"\bColette Kress\b", "Colét Kres"),
     (r"\bHarvey Jones\b", "Járvei Yóuns"), (r"\bTSMC\b", "te ese eme ce"), (r"\bFable 5\.2\b", "Féibol cinco punto dos"),
     (r"\bMythos 5\.2\b", "Mítos cinco punto dos"), (r"\bOpus 5\.5\b", "Óupus cinco punto cinco"), (r"\bGemini 4 Carbon\b", "Yémini cuatro Cárbon"),
