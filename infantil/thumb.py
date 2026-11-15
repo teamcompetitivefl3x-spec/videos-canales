@@ -20,9 +20,9 @@ for row, (txt, y, size, off) in enumerate(((LINES[0], 150, 200, 0), (LINES[1], 3
         K.outlined(d, (x + ws[k] / 2, y + (k % 2) * 14), c, f, K.RAINBOW[(k + off) % 10], sw=18); x += ws[k] + 10
 # objetos
 if TH and TH.get("objs"):
-    objs = TH["objs"]; n = len(objs); xs = [580 + (720 * k / max(1, n - 1)) for k in range(n)]
+    objs = TH["objs"]; n = len(objs); x0, x1 = TH.get("x", (580, 1300)); xs = [x0 + ((x1 - x0) * k / max(1, n - 1)) for k in range(n)]
     for k, kind in enumerate(objs):
-        K.paste_c(im, K.sprite(kind, 300 if n <= 3 else 250, face=kind in K.SHAPES), xs[k], 585 + (k % 2) * -35, 1.0, (k - n // 2) * 6)
+        K.paste_c(im, K.sprite(kind, TH.get("size", 300 if n <= 3 else 250), face=kind in K.SHAPES), xs[k], TH.get("y", 585) + (k % 2) * -35, 1.0, (k - n // 2) * 6)
 else:
     for k, (kind, x, y, s) in enumerate((("globo", 560, 640, 300), ("estrella", 960, 650, 260), ("manzana", 1360, 650, 280))):
         K.paste_c(im, K.sprite(kind, s), x, y)

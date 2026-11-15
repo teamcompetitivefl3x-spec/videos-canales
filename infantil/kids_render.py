@@ -531,6 +531,12 @@ def obj_sprite(kind, size=220, color=None, gray=False, face=False):
         animal_face(d, kind, c, r, W, C)
     elif kind in FRUITS:
         fruit_draw(d, kind, c, r, W, K)
+    elif kind.startswith("N_"):   # disco con número (miniatura / carteles): N_11, N_20...
+        n_ = int(kind[2:]); col = RAINBOW[(n_ - 1) % 10] if n_ > 0 else COL["red"]; rr = r * 1.25
+        d.ellipse([c - rr + W * 0.02, c - rr + W * 0.03, c + rr + W * 0.02, c + rr + W * 0.03], fill=(40, 40, 60, 110))
+        d.ellipse([c - rr, c - rr, c + rr, c + rr], fill=col, outline=(255, 255, 255), width=int(W * 0.04))
+        d.text((c, c + W * 0.01), str(n_), font=font(rr * (1.3 if n_ < 10 else 1.12)), fill=(255, 255, 255), anchor="mm",
+               stroke_width=int(W * 0.025), stroke_fill=COL["dark"])
     elif kind.startswith("L_"):
         letter_draw(im, kind[2:], W, K)
     elif kind in VOWEL_OBJS:
@@ -757,7 +763,7 @@ def draw_frame(L, scen, t):
     im = scen.frame(t, night); d = ImageDraw.Draw(im)
     who, env = speaking(t)
     danc = 1.0 if (kind == "dance" and b["dancing"] and t >= b["dancing"]) or kind in ("title", "end") else 0.0
-    if kind in ("review", "sreview", "freview", "bowl", "lreview") and b["confetti"] and t >= b["confetti"]: danc = 1.0
+    if kind in ("review", "sreview", "freview", "bowl", "lreview", "review20") and b["confetti"] and t >= b["confetti"]: danc = 1.0
     # ----- contenido -----
     if kind == "title" or kind == "end":
         txt1, txt2 = TITLE if kind == "title" else ("¡HASTA LA", "PRÓXIMA!")
@@ -823,18 +829,19 @@ def draw_frame(L, scen, t):
         banner(d, L, "¿QUÉ NÚMERO FALTA?", bt, size=110 if not L.v else 80, col=COL["purple"])
     elif kind == "missing":
         seq, miss = b["args"]; n = len(seq)
+        outlined(d, (L.W / 2 + 20, L.num_c[1] - 10), "¿QUÉ NÚMERO FALTA?", font(96 if not L.v else 70), COL["purple"], sw=10)
         for k, v in enumerate(seq):
-            if not L.v: x, y = L.W * (0.26 + 0.16 * k), L.H * 0.42
+            if not L.v: x, y = L.W * (0.245 + 0.118 * k), L.H * 0.42
             else: x, y = L.W * (0.25 + 0.5 * (k % 2)), L.H * (0.30 + 0.17 * (k // 2))
             tt = bt - k * 0.25
             if tt < 0: continue
             if k == miss and not (b["fill"] and t >= b["fill"]):
-                p = elastic(tt / 0.6); r = 105 * p
+                p = elastic(tt / 0.6); r = (95 if not L.v else 105) * p
                 d.ellipse([x - r, y - r, x + r, y + r], fill=(200, 200, 215), outline=(255, 255, 255), width=10)
                 outlined(d, (x, y + math.sin(t * 6) * 6), "?", font(r * 1.3), (255, 255, 255), sw=6)
             else:
                 tt2 = (t - b["fill"]) if (k == miss) else tt
-                numeral_disc(im, d, L, v, tt2, word=False, cx=x, cy=y, r=105)
+                numeral_disc(im, d, L, v, tt2, word=False, cx=x, cy=y, r=95 if not L.v else 105)
     elif kind == "sum_intro":
         banner(d, L, "¡A SUMAR!", bt, size=150, col=COL["green"])
     elif kind == "sum":
@@ -1185,9 +1192,87 @@ def draw_frame(L, scen, t):
             paste_c(im, sprite(ok, 195), x, 515 + ph, elastic((t - tt - 0.25) / 0.5), math.sin(t * 2 + i) * 4)
             if t - tt > 0.4: outlined(d, (x, 645 + ph), wd, font(38), (255, 255, 255), sw=6)
         if b["confetti"] and t >= b["confetti"]: confetti(d, L, t - b["confetti"])
+    elif kind == "teens":  # del 11 al 20 con dos cajitas de diez: ("scene", "teens", n, objeto, visibles_al_inicio) + pop i | popall + numeral + reveal
+        n, ok, init = b["args"][0], b["args"][1], b["args"][2]
+        if not L.v: cs = 92; fx = [L.W / 2 - 255, L.W / 2 + 255]; fy = [500, 500]
+        else: cs = 150; fx = [L.W / 2, L.W / 2]; fy = [650, 975]
+        def cell(i):
+            f_, j = divmod(i - 1, 10); r_, c_ = divmod(j, 5)
+            return f_, fx[f_] + (c_ - 2) * cs, fy[f_] + (r_ - 0.5) * cs
+        for f_ in (0, 1):   # las dos cajitas
+            if f_ == 1 and n <= 10: continue
+            p = elastic(bt / 0.5); x0, y0 = fx[f_] - 2.5 * cs - 12, fy[f_] - cs - 12
+            if p <= 0: continue
+            w2, h2 = (5 * cs + 24) * p / 2, (2 * cs + 24) * p / 2
+            d.rounded_rectangle([fx[f_] - w2 + 6, fy[f_] - h2 + 9, fx[f_] + w2 + 6, fy[f_] + h2 + 9], radius=int(22 * p) + 1, fill=(60, 110, 60))
+            d.rounded_rectangle([fx[f_] - w2, fy[f_] - h2, fx[f_] + w2, fy[f_] + h2], radius=int(22 * p) + 1, fill=(255, 250, 232), outline=COL["dark"], width=6)
+            if p > 0.95:
+                for j in range(10):
+                    r_, c_ = divmod(j, 5); cx_, cy_ = fx[f_] + (c_ - 2) * cs, fy[f_] + (r_ - 0.5) * cs
+                    d.rounded_rectangle([cx_ - cs / 2 + 5, cy_ - cs / 2 + 5, cx_ + cs / 2 - 5, cy_ + cs / 2 - 5], radius=12, outline=(214, 205, 185), width=3)
+        if init > 0: shown = {i: b["start"] + 0.35 + 0.05 * i for i in range(1, init + 1)}
+        else: shown = {i: b["popall"] + 0.07 * i for i in range(1, n + 1)} if b["popall"] else {}
+        for i, tt in b["pops"]: shown[i] = tt
+        spr = sprite(ok, int(cs * 0.86))
+        for i in range(1, n + 1):
+            if i not in shown or t < shown[i]: continue
+            f_, x, y = cell(i); tt = t - shown[i]
+            new = any(i == pi for pi, _ in b["pops"])
+            sc = elastic(tt / 0.45) * ((1 + 0.12 * math.sin(t * 7)) if new and tt < 3 else 1)
+            if new and tt < 1.0:
+                for k in range(8):
+                    a = math.radians(k * 45 + tt * 120); rr = cs * 0.6 + tt * cs * 1.2
+                    d.polygon(star_pts(x + rr * math.cos(a), y + rr * math.sin(a), 16 * (1 - tt) + 1, 6 * (1 - tt) + 1), fill=RAINBOW[k])
+            paste_c(im, spr, x, y + math.sin(t * 2.5 + i) * 2, sc, math.sin(t * 2 + i) * 4)
+        if b["reveal"] is not None and t >= b["reveal"]:   # 10 + k debajo de las cajitas
+            rt = t - b["reveal"]; k_ = n - 10
+            if not L.v:
+                ly = fy[0] + cs + 62
+                outlined(d, (fx[0], ly), "10", font(78 * elastic(rt / 0.5) + 1), COL["yellow"], sw=9)
+                outlined(d, (L.W / 2, ly), "+", font(78 * elastic((rt - 0.15) / 0.5) + 1), (255, 255, 255), sw=9)
+                outlined(d, (fx[1], ly), str(k_), font(78 * elastic((rt - 0.3) / 0.5) + 1), COL["yellow"], sw=9)
+            else:
+                outlined(d, (L.W / 2, fy[1] + cs + 70), f"10 + {k_}", font(90 * elastic(rt / 0.5) + 1), COL["yellow"], sw=10)
+        if q_on(b, t): qmark(d, L, t)
+        if b["numeral"] and t >= b["numeral"][1]:
+            numeral_disc(im, d, L, b["numeral"][0], t - b["numeral"][1])
+    elif kind == "numq":  # ¿qué número es?: ("scene", "numq", n, objeto) + qmark + reveal
+        n, ok = b["args"][0], b["args"][1]
+        cx = L.W / 2 + (20 if not L.v else 0); cy = (L.stage[1] + L.stage[3]) / 2 + (60 if not L.v else 40)
+        rev = b["reveal"] is not None and t >= b["reveal"]
+        pul = (1 + 0.05 * math.sin((t - b["reveal"]) * 7)) if rev else 1
+        for k, sx in enumerate((-1, 1)):
+            paste_c(im, sprite(ok, 170), cx + sx * (360 if not L.v else 330), cy + 40 + math.sin(t * 2.5 + k * 2) * 10, elastic((bt - 0.4) / 0.5), math.sin(t * 2 + k) * 8)
+        numeral_disc(im, d, L, n, bt, word=False, cx=cx, cy=cy + math.sin(t * 2.2) * 6, r=int(200 * pul))
+        if rev:
+            rt = t - b["reveal"]
+            if rt < 1.2:
+                for k in range(10):
+                    a = math.radians(k * 36 + rt * 90); rr = 230 + rt * 260
+                    d.polygon(star_pts(cx + rr * math.cos(a), cy + rr * math.sin(a), 26 * (1.2 - rt), 10 * (1.2 - rt)), fill=RAINBOW[k])
+            banner(d, L, WORDS[n].upper(), rt, y=L.num_c[1] - 5, size=130, col=RAINBOW[(n - 1) % 10])
+        else:
+            outlined(d, (L.W / 2 + 20, L.num_c[1] - 5 + math.sin(t * 6) * 6), "¿QUÉ NÚMERO ES?", font(96 if not L.v else 80), COL["yellow"], sw=10)
+    elif kind == "review20":  # contar del 1 al N (10 o 20): ("scene", "review20", N) + rpop i + confetti
+        N = b["args"][0]
+        last = 0
+        for i, tt in b["rpops"]:
+            if t < tt: continue
+            last = max(last, i)
+            if not L.v:
+                r_, c_ = divmod(i - 1, 10); x = L.W / 2 + 20 + (c_ - 4.5) * 98; y = (430 if N <= 10 else 390 + r_ * 150)
+            else:
+                r_, c_ = divmod(i - 1, 4); x = L.W / 2 + (c_ - 1.5) * 220; y = 560 + r_ * 150
+            numeral_disc(im, d, L, i, t - tt, word=False, cx=x, cy=y + math.sin(t * 4 + i) * 6, r=46 if not L.v else 62)
+        if last:
+            lt = max(tt for i, tt in b["rpops"] if i == last)
+            outlined(d, (L.W / 2 + 20, L.num_c[1] - 10), WORDS[last].upper(), font(110 * elastic((t - lt) / 0.4) + 1), RAINBOW[(last - 1) % 10], sw=11)
+        else:
+            banner(d, L, "¡A CONTAR!", bt, y=L.num_c[1] - 10, size=120, col=COL["yellow"])
+        if b["confetti"] and t >= b["confetti"]: confetti(d, L, t - b["confetti"])
     elif kind == "bye":
         banner(d, L, "¡ADIÓS!", bt, size=160, col=COL["orange"])
-    if kind in ("card", "size", "bye", "animal", "fruit", "bowl", "word", "letter", "shape", "spattern") and b["confetti"] and t >= b["confetti"]: confetti(d, L, t - b["confetti"])
+    if kind in ("card", "size", "bye", "animal", "fruit", "bowl", "word", "letter", "shape", "spattern", "teens") and b["confetti"] and t >= b["confetti"]: confetti(d, L, t - b["confetti"])
     # ----- personajes -----
     tw = env if who == "tula" else 0.0; pw_ = env if who == "pipo" else 0.0
     tsp = draw_tula(t, tw, danc); psp = draw_pipo(t, pw_, danc)
