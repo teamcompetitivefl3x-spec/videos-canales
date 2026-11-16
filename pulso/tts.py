@@ -46,6 +46,8 @@ PRON = [
     (r"\bLas Vegas\b", "Las Végas"), (r"\bUnited Airlines\b", "Iunáited Érlains"), (r"\bUnited\b", "Iunáited"),
     (r"\b1986\b", "mil novecientos ochenta y seis"), (r"15\.000 millones", "quince mil millones"), (r"\b44\b", "cuarenta y cuatro"),
     (r"\b96\b", "noventa y seis"), (r"\b78\b", "setenta y ocho"), (r"\b3D\b", "tres dé"), (r"\bClaude\b", "Clod"), (r"\bAnthropic\b", "Antrópic"),
+    (r"35\.578", "treinta y cinco mil quinientas setenta y ocho"), (r"\b594\b", "quinientos noventa y cuatro"), (r"\b24\b", "veinticuatro"),
+    (r"\bGrok Build\b", "Grok Bild"), (r"\bClaroc\b", "Clárok"),
     (r"«|»|\"", ""),
 ]
 
