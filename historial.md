@@ -23,3 +23,4 @@ fecha · canal · título · ID de YouTube
 2026-11-14 · Peque Planeta · auto · short · ¿Qué forma es? 🔺 ¡Adivina las formas con Tula y Pipo! #shorts · WuJdnJko_SQ
 2026-11-14 · Pulso IA · auto · short · Una aerolínea prohibió que la IA te compre pasajes… aunque tú lo apruebes #shorts · wy-w7-LIqlA
 2026-11-15 · Pulso IA · auto · largo · ¿Por qué la IA inventa cosas con total seguridad? La culpa es de un examen · ncHs3tcVJbc
+2026-11-16 · Peque Planeta · auto · short · ¿Con qué vocal empieza? 🅰️ ¡Juega con las vocales con Tula y Pipo! #shorts · EX50rtRMlJ0

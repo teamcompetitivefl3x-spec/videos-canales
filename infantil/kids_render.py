@@ -1140,19 +1140,22 @@ def draw_frame(L, scen, t):
         ok, wd, ch = b["args"][0], b["args"][1], b["args"][2]
         cx = (L.stage[0] + L.stage[2]) / 2 + 30
         rev = b["reveal"] is not None and t >= b["reveal"]
-        paste_c(im, sprite(ok, 330), cx, 375 + math.sin(t * 2.5) * 6, elastic(bt / 0.5), math.sin(t * 2) * 3)
+        if L.v: cx = L.W / 2
+        paste_c(im, sprite(ok, 330 if not L.v else 500), cx, (375 if not L.v else 760) + math.sin(t * 2.5) * 6, elastic(bt / 0.5), math.sin(t * 2) * 3)
         for k, v in enumerate(VOWELS):
-            x = cx + 40 + (k - 2) * 150; y = 640 + math.sin(t * 3 + k) * 5; tt = bt - 0.4 - k * 0.15
+            x = (cx + 40 + (k - 2) * 150) if not L.v else (cx + (k - 2) * 190); y = (640 if not L.v else 1120) + math.sin(t * 3 + k) * 5; tt = bt - 0.4 - k * 0.15
             if tt < 0: continue
             sc = elastic(tt / 0.45); al = 1.0
             if rev:
                 if v == ch:
                     rt = t - b["reveal"]; sc *= 1.25 + 0.08 * math.sin(rt * 7)
-                    rr = 92 + 5 * math.sin(t * 6); d.ellipse([x - rr, y - rr, x + rr, y + rr], fill=(255, 255, 255, 230), outline=COL["yellow"], width=12)
+                    rr = (92 if not L.v else 105) + 5 * math.sin(t * 6); d.ellipse([x - rr, y - rr, x + rr, y + rr], fill=(255, 255, 255, 230), outline=COL["yellow"], width=12)
                 else: al = 0.35
-            paste_c(im, sprite("L_" + v, 175), x, y, sc, 0, alpha=al)
+            paste_c(im, sprite("L_" + v, 175 if not L.v else 200), x, y, sc, 0, alpha=al)
         if rev: big_word(d, L, wd, ch, t - b["reveal"], L.num_c[1] - 10, 120)
-        else: outlined(d, (L.W / 2 + 30, L.num_c[1] - 10), "¿CON QUÉ VOCAL EMPIEZA?", font(70), COL["yellow"], sw=9)
+        elif not L.v: outlined(d, (L.W / 2 + 30, L.num_c[1] - 10), "¿CON QUÉ VOCAL EMPIEZA?", font(70), COL["yellow"], sw=9)
+        else:
+            for j, ln in enumerate(("¿CON QUÉ VOCAL", "EMPIEZA?")): outlined(d, (L.W / 2, L.num_c[1] - 30 + j * 86), ln, font(78), COL["yellow"], sw=9)
     elif kind == "lfind":  # ¿dónde está la...?: ("scene", "lfind", ["E","O","A"], idx, "A") + qmark + reveal
         seq, idx, ch = b["args"][0], b["args"][1], b["args"][2]
         cx = (L.stage[0] + L.stage[2]) / 2 + 30
@@ -1171,17 +1174,18 @@ def draw_frame(L, scen, t):
     elif kind == "lpattern":  # ¿qué vocal falta?: ("scene", "lpattern", ["A","E","I","O","U"], idx) + fill
         seq, miss = b["args"][0], b["args"][1]
         cx = (L.stage[0] + L.stage[2]) / 2 + 30
-        outlined(d, (L.W / 2 + 30, L.num_c[1] - 10), "¿QUÉ VOCAL FALTA?", font(96), COL["purple"], sw=10)
+        if L.v: cx = L.W / 2 + 10
+        outlined(d, (L.W / 2 + (30 if not L.v else 0), L.num_c[1] - 10), "¿QUÉ VOCAL FALTA?", font(96 if not L.v else 84), COL["purple"], sw=10)
         for k, v in enumerate(seq):
-            x = cx - 10 + (k - 2) * 170; y = 480 + math.sin(t * 2.6 + k) * 6; tt = bt - k * 0.22
+            x = cx - 10 + (k - 2) * (170 if not L.v else 195); y = (480 if not L.v else 800) + math.sin(t * 2.6 + k) * 6; tt = bt - k * 0.22
             if tt < 0: continue
             if k == miss and not (b["fill"] is not None and t >= b["fill"]):
-                p = elastic(tt / 0.6); h = 70 * p
+                p = elastic(tt / 0.6); h = (70 if not L.v else 82) * p
                 d.rounded_rectangle([x - h, y - h * 1.2, x + h, y + h * 1.2], radius=int(h * 0.3) + 1, fill=(215, 215, 228), outline=(255, 255, 255), width=8)
                 outlined(d, (x, y + math.sin(t * 6) * 6), "?", font(max(1, h * 1.6)), (255, 255, 255), sw=6)
             else:
                 st = (t - b["fill"]) if k == miss else tt
-                paste_c(im, sprite("L_" + v, 220), x, y, elastic(st / 0.45) * (1.15 if k == miss else 1.0))
+                paste_c(im, sprite("L_" + v, 220 if not L.v else 250), x, y, elastic(st / 0.45) * (1.15 if k == miss else 1.0))
     elif kind == "lreview":  # repaso: ("scene", "lreview", [("A", "abeja", "ABEJA")...]) + rpop i + confetti
         items = b["args"][0]; cx = (L.stage[0] + L.stage[2]) / 2 + 30
         for i, tt in b["rpops"]:
