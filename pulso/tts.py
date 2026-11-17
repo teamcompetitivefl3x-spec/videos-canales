@@ -13,6 +13,11 @@ GAP_SECT = 1.10   # pausa entre secciones
 
 # Pronunciación para el TTS (el texto en pantalla no cambia)
 PRON = [
+    (r"\bMalbear Labs\b", "Málbear Labs"), (r"\bDeepSeek Flash\b", "Dip Sik Flash"), (r"\bARTEX\b", "Ártex"), (r"\bHexstrike\b", "Jéks estráik"),
+    (r"\bPentAGI\b", "Pent ei yi ai"), (r"\bkernels\b", "kérnels"), (r"\bMI355X\b", "eme i tres cincuenta y cinco equis"), (r"\bAMD\b", "a eme dé"),
+    (r"\bMythos\b", "Mítos"), (r"\bROBOTERA\b", "Robotéra"), (r"\bShenzhen\b", "Shenyén"), (r"\bDongguan\b", "Dongguán"),
+    (r"\bCNBC\b", "ce ene be ce"), (r"\bApollo Research\b", "Apólo Ríserch"), (r"\bApollo\b", "Apólo"), (r"\bGoodfire\b", "Gud fáier"),
+    (r"\bTransluce\b", "Tránslus"),
     (r"\bGPT-5\b", "yi pi ti cinco"), (r"\bSteven Schwartz\b", "Stíven Shuórts"), (r"\bSchwartz\b", "Shuórts"),
     (r"\bKevin Castel\b", "Kévin Castél"), (r"\bDamien Charlotin\b", "Damián Sharlotán"), (r"\bAir Canada\b", "Er Cánada"),
     (r"\bDeloitte\b", "Deloít"), (r"\bChris Rudge\b", "Kris Rach"), (r"\bAdam Kalai\b", "Ádam Kalái"), (r"\bKalai\b", "Kalái"),
