@@ -25,3 +25,4 @@ fecha · canal · título · ID de YouTube
 2026-11-15 · Pulso IA · auto · largo · ¿Por qué la IA inventa cosas con total seguridad? La culpa es de un examen · ncHs3tcVJbc
 2026-11-16 · Peque Planeta · auto · short · ¿Con qué vocal empieza? 🅰️ ¡Juega con las vocales con Tula y Pipo! #shorts · EX50rtRMlJ0
 2026-11-16 · Pulso IA · auto · short · Hicieron 35.578 apps con IA… y cualquiera podía abrirlas sin contraseña #shorts · hPdvrn_IUxM
+2026-11-17 · Peque Planeta · auto · largo · ¡Contamos del 11 al 20 con Tula y Pipo! 🔢 Números para niños | Aprende a contar · fQs9V4-UVFE

@@ -15,7 +15,7 @@ OBJS = {
 WORDS = ["cero", "uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve", "diez",
          "once", "doce", "trece", "catorce", "quince", "dieciséis", "diecisiete", "dieciocho", "diecinueve", "veinte"]
 TITLE = ("¡CONTAMOS", "DEL 11 AL 20!")
-THUMB = {"lines": ("¡DEL 11", "AL 20!"), "objs": ["N_11", "N_15", "N_20"], "x": (700, 1360), "y": 640, "size": 250}
+THUMB = {"lines": ("¡DEL 11", "AL 20!"), "objs": ["N_11", "N_15", "N_20"], "x": (830, 1290), "y": 640, "size": 250}
 
 def E(who=None, text=None, pause=0.35, do=None, chap=None):
     e = dict(who=who, text=text, pause=pause, do=do or [])
