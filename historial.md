@@ -28,3 +28,4 @@ fecha · canal · título · ID de YouTube
 2026-11-17 · Peque Planeta · auto · largo · ¡Contamos del 11 al 20 con Tula y Pipo! 🔢 Números para niños | Aprende a contar · fQs9V4-UVFE
 2026-11-17 · Pulso IA · auto · largo · Un hacker dejó a una IA atacando sola 2 semanas… y otras 5 locuras reales de la IA · tUotPa0gwOI
 2026-11-19 · Peque Planeta · auto · largo · ¡Animales de la granja y sus sonidos con Tula y Pipo! 🐮 Vaca, cerdito, gallina y más · TK4Ld-evZMQ
+2026-11-19 · Pulso IA · auto · largo · Clonaban la voz del jefe con IA: así se habrían llevado 129 millones de dólares · SeZQLFR__ho

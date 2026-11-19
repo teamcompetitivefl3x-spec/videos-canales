@@ -53,6 +53,9 @@ PRON = [
     (r"\b96\b", "noventa y seis"), (r"\b78\b", "setenta y ocho"), (r"\b3D\b", "tres dé"), (r"\bClaude\b", "Clod"), (r"\bAnthropic\b", "Antrópic"),
     (r"35\.578", "treinta y cinco mil quinientas setenta y ocho"), (r"\b594\b", "quinientos noventa y cuatro"), (r"\b24\b", "veinticuatro"),
     (r"\bGrok Build\b", "Grok Bild"), (r"\bClaroc\b", "Clárok"),
+    (r"\bArup\b", "Árup"), (r"\bHong Kong\b", "Jong Kong"), (r"\bfintech\b", "fíntek"), (r"\bMassachusetts\b", "Masachúsets"),
+    (r"\bRhode Island\b", "Róud Áilan"), (r"\bFerrari\b", "Ferrári"),
+    (r"\bWPP\b", "dóble ve pe pe"), (r"\bTeams\b", "Tíms"), (r"\bYouTube\b", "Yutúb"), (r"\bFBI\b", "efe be i"),
     (r"«|»|\"", ""),
 ]
 
