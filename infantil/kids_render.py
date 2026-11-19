@@ -145,8 +145,9 @@ def shape_face(d, kind, c, r, S):
         d.ellipse([c + r * ex - r * 0.11, fy + r * 0.02, c + r * ex + r * 0.11, fy + r * 0.14], fill=(255, 150, 170, 170))
 
 # ---------- animales (caritas simples, de frente) ----------
-ANIMALS = ("vaca", "perro", "gato", "pato", "oveja")
-ANIMAL_COL = {"vaca": "pink", "perro": "red", "gato": "orange", "pato": "yellow", "oveja": "cyan"}
+ANIMALS = ("vaca", "perro", "gato", "pato", "oveja", "cerdo", "gallina", "caballo", "rana")
+ANIMAL_COL = {"vaca": "pink", "perro": "red", "gato": "orange", "pato": "yellow", "oveja": "cyan",
+              "cerdo": "pink", "gallina": "red", "caballo": "orange", "rana": "green"}
 
 def _eyes(d, c, y, r, dx=0.32, s=0.15):
     ew = r * s
@@ -234,6 +235,71 @@ def animal_face(d, kind, c, r, W, C):
         _eyes(d, c, c - r * 0.12, r, dx=0.2, s=0.13)
         d.arc([c - r * 0.16, c + r * 0.3, c + r * 0.16, c + r * 0.52], 20, 160, fill=(255, 255, 255), width=lw)
         _cheeks(d, c, c + r * 0.22, r, 0.3)
+    else:
+        g = C("red") == (205, 205, 215)
+        def G(rgb):   # color fijo de detalle; en gris, gris con la misma luminosidad
+            if not g: return rgb
+            v = int(150 + 0.36 * (0.3 * rgb[0] + 0.59 * rgb[1] + 0.11 * rgb[2])); return (v, v, min(255, v + 8))
+        if kind == "cerdo":
+            body = C("pink"); dk = G((235, 110, 150))
+            for sx in (-1, 1):   # orejas triangulares
+                d.polygon([(c + sx * r * 0.25, c - r * 0.72), (c + sx * r * 0.85, c - r * 1.12), (c + sx * r * 0.82, c - r * 0.35)], fill=body)
+                d.polygon([(c + sx * r * 0.42, c - r * 0.7), (c + sx * r * 0.76, c - r * 0.95), (c + sx * r * 0.74, c - r * 0.5)], fill=dk)
+            d.ellipse([c - r * 0.95, c - r * 0.85, c + r * 0.95, c + r * 0.9], fill=body)
+            _eyes(d, c, c - r * 0.35, r, dx=0.36, s=0.14)
+            d.ellipse([c - r * 0.42, c - r * 0.08, c + r * 0.42, c + r * 0.42], fill=G((255, 170, 200)), outline=dk, width=lw)
+            for sx in (-1, 1):
+                d.ellipse([c + sx * r * 0.16 - r * 0.07, c + r * 0.06, c + sx * r * 0.16 + r * 0.07, c + r * 0.28], fill=G((180, 70, 110)))
+            d.arc([c - r * 0.22, c + r * 0.42, c + r * 0.22, c + r * 0.68], 20, 160, fill=COL["dark"], width=lw)
+            _cheeks(d, c, c + r * 0.2, r, 0.66)
+        elif kind == "gallina":
+            body = G((252, 252, 250)) if not g else (215, 215, 222); red = C("red") if not g else (175, 175, 188)
+            for (x, y, rr) in ((-0.22, -0.88, 0.2), (0.0, -1.0, 0.24), (0.22, -0.88, 0.2)):   # cresta
+                d.ellipse([c + r * x - r * rr, c + r * y - r * rr, c + r * x + r * rr, c + r * y + r * rr], fill=red)
+            d.ellipse([c - r * 0.88, c - r * 0.85, c + r * 0.88, c + r * 0.92], fill=body, outline=G((215, 215, 225)), width=lw)
+            _eyes(d, c, c - r * 0.3, r, dx=0.33, s=0.15)
+            d.polygon([(c - r * 0.2, c - r * 0.02), (c + r * 0.2, c - r * 0.02), (c, c + r * 0.3)], fill=G((255, 185, 40)))
+            d.line([(c - r * 0.2, c + r * 0.08), (c + r * 0.2, c + r * 0.08)], fill=G((220, 140, 20)), width=lw)
+            d.ellipse([c - r * 0.1, c + r * 0.28, c + r * 0.1, c + r * 0.55], fill=red)   # barbilla
+            _cheeks(d, c, c + r * 0.05, r, 0.58)
+        elif kind == "caballo":
+            body = C("brown"); light = G((225, 180, 135)); mane = G((70, 40, 25))
+            for sx in (-1, 1):   # orejas
+                d.polygon([(c + sx * r * 0.2, c - r * 0.75), (c + sx * r * 0.55, c - r * 1.25), (c + sx * r * 0.62, c - r * 0.6)], fill=body)
+                d.polygon([(c + sx * r * 0.33, c - r * 0.78), (c + sx * r * 0.52, c - r * 1.08), (c + sx * r * 0.55, c - r * 0.7)], fill=light)
+            d.ellipse([c - r * 0.68, c - r * 0.95, c + r * 0.68, c + r * 0.55], fill=body)
+            d.ellipse([c - r * 0.58, c + r * 0.05, c + r * 0.58, c + r * 1.02], fill=light)
+            for (x, y, rr) in ((-0.15, -0.88, 0.2), (0.08, -0.95, 0.22), (0.25, -0.82, 0.17)):   # flequillo
+                d.ellipse([c + r * x - rr * r, c + r * y - rr * r, c + r * x + rr * r, c + r * y + rr * r], fill=mane)
+            d.polygon([(c - r * 0.1, c - r * 0.6), (c + r * 0.1, c - r * 0.6), (c, c - r * 0.35)], fill=G((255, 255, 255)))   # mancha
+            _eyes(d, c, c - r * 0.3, r, dx=0.32, s=0.14)
+            for sx in (-1, 1):
+                d.ellipse([c + sx * r * 0.24 - r * 0.08, c + r * 0.42, c + sx * r * 0.24 + r * 0.08, c + r * 0.62], fill=G((120, 70, 45)))
+            d.arc([c - r * 0.25, c + r * 0.6, c + r * 0.25, c + r * 0.88], 20, 160, fill=COL["dark"], width=lw)
+            _cheeks(d, c, c + r * 0.12, r, 0.52)
+        elif kind == "rana":
+            body = C("green"); belly = G((185, 235, 140))
+            for sx in (-1, 1):   # ojos saltones
+                d.ellipse([c + sx * r * 0.45 - r * 0.36, c - r * 0.95, c + sx * r * 0.45 + r * 0.36, c - r * 0.25], fill=body)
+            d.ellipse([c - r * 1.0, c - r * 0.6, c + r * 1.0, c + r * 0.8], fill=body)
+            d.ellipse([c - r * 0.6, c + r * 0.05, c + r * 0.6, c + r * 0.75], fill=belly)
+            _eyes(d, c, c - r * 0.6, r, dx=0.45, s=0.2)
+            d.arc([c - r * 0.62, c - r * 0.35, c + r * 0.62, c + r * 0.38], 25, 155, fill=COL["dark"], width=int(lw * 1.4))
+            for sx in (-1, 1):
+                d.ellipse([c + sx * r * 0.12 - r * 0.04, c - r * 0.2, c + sx * r * 0.12 + r * 0.04, c - r * 0.13], fill=COL["dark"])
+            _cheeks(d, c, c + r * 0.05, r, 0.7)
+
+def granero(d, c, r, W):
+    rd, wh = (215, 50, 50), (255, 255, 255); lw = int(W * 0.022)
+    d.polygon([(c - r * 1.2, c - r * 0.25), (c, c - r * 1.2), (c + r * 1.2, c - r * 0.25)], fill=(170, 35, 40))
+    d.line([(c - r * 1.25, c - r * 0.2), (c, c - r * 1.25), (c + r * 1.25, c - r * 0.2)], fill=wh, width=lw)
+    d.rectangle([c - r * 1.0, c - r * 0.35, c + r * 1.0, c + r * 1.15], fill=rd)
+    d.rectangle([c - r * 0.45, c + r * 0.25, c + r * 0.45, c + r * 1.15], fill=wh)
+    d.rectangle([c - r * 0.37, c + r * 0.33, c + r * 0.37, c + r * 1.15], fill=rd)
+    d.line([(c - r * 0.37, c + r * 0.33), (c + r * 0.37, c + r * 1.15)], fill=wh, width=lw)
+    d.line([(c + r * 0.37, c + r * 0.33), (c - r * 0.37, c + r * 1.15)], fill=wh, width=lw)
+    d.rectangle([c - r * 0.2, c - r * 0.75, c + r * 0.2, c - r * 0.35], fill=wh)
+    d.rectangle([c - r * 0.14, c - r * 0.69, c + r * 0.14, c - r * 0.41], fill=(250, 210, 90))
 
 # ---------- frutas (episodio de frutas) ----------
 FRUITS = ("banana", "naranja", "uvas", "fresa", "pera")
@@ -529,6 +595,8 @@ def obj_sprite(kind, size=220, color=None, gray=False, face=False):
         d.ellipse([c - r * 0.65, c - r * 0.6, c - r * 0.35, c - r * 0.3], fill=(255, 255, 255, 150))
     elif kind in ANIMALS:
         animal_face(d, kind, c, r, W, C)
+    elif kind == "granero":
+        granero(d, c, r, W)
     elif kind in FRUITS:
         fruit_draw(d, kind, c, r, W, K)
     elif kind.startswith("N_"):   # disco con número (miniatura / carteles): N_11, N_20...
@@ -1102,12 +1170,14 @@ def draw_frame(L, scen, t):
     elif kind == "freview":  # repaso de frutas: ("scene", "freview", [(fruta, "NOMBRE")...]) + rpop i + confetti
         items = b["args"][0]; n = len(items); sz = 200 if not L.v else 230
         box = (L.stage[0], L.stage[1] - 20, L.stage[2], L.stage[3] - 80) if not L.v else (L.stage[0], L.stage[1] - 60, L.stage[2], L.stage[3] + 80)
+        big_n = n > 6 and not L.v   # muchos elementos: más chicos y corridos a la derecha (lejos de Tula)
+        if big_n: sz = 175; box = (560, 150, 1440, 660)
         pos = grid_positions(n, box, sz) if not L.v else [(L.W * (0.2 + 0.3 * (k % 3)), box[1] + 150 + 270 * (k // 3)) for k in range(n)]
         for i, tt in b["rpops"]:
             if t < tt: continue
             fk, nm = items[i - 1]; x, y = pos[i - 1]; y += math.sin(t * 3 + i) * 6
             paste_c(im, sprite(fk, sz), x, y, elastic((t - tt) / 0.5), math.sin(t * 2 + i) * 4)
-            if t - tt > 0.3: outlined(d, (x, y + sz * 0.56), nm, font(40 if not L.v else 46), (255, 255, 255), sw=7)
+            if t - tt > 0.3: outlined(d, (x, y + sz * 0.56), nm, font((34 if big_n else 40) if not L.v else 46), (255, 255, 255), sw=6 if big_n else 7)
         if b["confetti"] and t >= b["confetti"]: confetti(d, L, t - b["confetti"])
     elif kind == "letter":  # vocal grande: ("scene", "letter", "A") + pop 2 (minúscula)
         ch = b["args"][0]; cx = (L.stage[0] + L.stage[2]) / 2 + 20; cy = (L.stage[1] + L.stage[3]) / 2 + 40
