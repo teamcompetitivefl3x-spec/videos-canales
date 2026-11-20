@@ -56,6 +56,9 @@ PRON = [
     (r"\bArup\b", "Árup"), (r"\bHong Kong\b", "Jong Kong"), (r"\bfintech\b", "fíntek"), (r"\bMassachusetts\b", "Masachúsets"),
     (r"\bRhode Island\b", "Róud Áilan"), (r"\bFerrari\b", "Ferrári"),
     (r"\bWPP\b", "dóble ve pe pe"), (r"\bTeams\b", "Tíms"), (r"\bYouTube\b", "Yutúb"), (r"\bFBI\b", "efe be i"),
+    (r"1,8 billones", "uno coma ocho billones"), (r"\b83 dólares", "ochenta y tres dólares"), (r"34 %", "treinta y cuatro por ciento"),
+    (r"17 %", "diecisiete por ciento"), (r"80\.000 millones", "ochenta mil millones"), (r"33\.000 millones", "treinta y tres mil millones"),
+    (r"1\.300 millones", "mil trescientos millones"), (r"\bNasdaq\b", "Násdak"), (r"\bSpaceX\b", "Spéis Ex"), (r"\bprospecto\b", "prospecto"),
     (r"«|»|\"", ""),
 ]
 
