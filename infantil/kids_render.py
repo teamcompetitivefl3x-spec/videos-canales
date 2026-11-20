@@ -1344,9 +1344,39 @@ def draw_frame(L, scen, t):
         else:
             banner(d, L, "¡A CONTAR!", bt, y=L.num_c[1] - 10, size=120, col=COL["yellow"])
         if b["confetti"] and t >= b["confetti"]: confetti(d, L, t - b["confetti"])
+    elif kind == "odd":  # ¿cuál es diferente?: ("scene", "odd", [(objeto, color|None, escala)...], idx_distinto, "TEXTO", color) + qmark + reveal
+        items, oi, lab, cn = b["args"][0], b["args"][1], b["args"][2], b["args"][3]
+        n = len(items); rev = b["reveal"] is not None and t >= b["reveal"]
+        if L.v:
+            sz = 300; pos = [(L.W / 2 + (-200 if k % 2 == 0 else 200), 700 + (k // 2) * 330) for k in range(n)]
+        else:
+            sz = 240; pos = [(L.W / 2 + 20 + (k - (n - 1) / 2) * 250, 470) for k in range(n)]
+        for k, (ok, oc, osc) in enumerate(items):
+            x, y = pos[k]; y += math.sin(t * 3 + k) * 7; tt = bt - 0.2 - k * 0.18
+            if tt < 0: continue
+            sc = elastic(tt / 0.45) * osc; al = 1.0; rot = math.sin(t * 2 + k) * 4
+            if rev:
+                rt = t - b["reveal"]
+                if k == oi:
+                    rr = sz * 0.6 + 6 * math.sin(t * 6)
+                    d.ellipse([x - rr, y - rr, x + rr, y + rr], fill=(255, 255, 255, 235), outline=COL["yellow"], width=14)
+                    sc *= 1.12 + 0.07 * math.sin(rt * 7)
+                    if rt < 1.2:
+                        for j in range(10):
+                            a = j * 36 + rt * 90; r2 = sz * 0.55 + rt * 230
+                            d.polygon(star_pts(x + r2 * math.cos(math.radians(a)), y + r2 * math.sin(math.radians(a)), 22 * (1.2 - rt), 9 * (1.2 - rt)), fill=RAINBOW[j])
+                else: al = 0.35
+            col = tuple(oc) if oc else None
+            paste_c(im, sprite(ok, sz, col), x, y, sc, rot, alpha=al)
+        if rev: banner(d, L, lab, t - b["reveal"], y=L.num_c[1] if L.v else L.num_c[1] - 10, size=(110 if len(lab) <= 12 else 90) if L.v else 100, col=COL[cn])
+        elif bt > 0.5:
+            yy = L.num_c[1] + math.sin(t * 5) * 6
+            if L.v:
+                if q_on(b, t): qmark(d, L, t)   # el título del Short ya dice "¿CUÁL ES DIFERENTE?"
+            else: outlined(d, (L.W / 2 + 30, yy - 10), "¿CUÁL ES DIFERENTE?", font(84), COL["yellow"], sw=10)
     elif kind == "bye":
         banner(d, L, "¡ADIÓS!", bt, size=160, col=COL["orange"])
-    if kind in ("card", "size", "bye", "animal", "fruit", "bowl", "word", "letter", "shape", "spattern", "teens") and b["confetti"] and t >= b["confetti"]: confetti(d, L, t - b["confetti"])
+    if kind in ("card", "size", "bye", "animal", "fruit", "bowl", "word", "letter", "shape", "spattern", "teens", "odd") and b["confetti"] and t >= b["confetti"]: confetti(d, L, t - b["confetti"])
     # ----- personajes -----
     tw = env if who == "tula" else 0.0; pw_ = env if who == "pipo" else 0.0
     tsp = draw_tula(t, tw, danc); psp = draw_pipo(t, pw_, danc)
