@@ -29,3 +29,4 @@ fecha · canal · título · ID de YouTube
 2026-11-17 · Pulso IA · auto · largo · Un hacker dejó a una IA atacando sola 2 semanas… y otras 5 locuras reales de la IA · tUotPa0gwOI
 2026-11-19 · Peque Planeta · auto · largo · ¡Animales de la granja y sus sonidos con Tula y Pipo! 🐮 Vaca, cerdito, gallina y más · TK4Ld-evZMQ
 2026-11-19 · Pulso IA · auto · largo · Clonaban la voz del jefe con IA: así se habrían llevado 129 millones de dólares · SeZQLFR__ho
+2026-11-20 · Peque Planeta · auto · short · ¿Cuál es diferente? 🔍 ¡Encuentra el diferente con Tula y Pipo! #shorts · nr2Y6lhz4TU
