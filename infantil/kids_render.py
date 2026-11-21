@@ -473,6 +473,21 @@ def vowel_obj_draw(im, d, kind, c, r, W, K):
 def silhouette(spr, col=(120, 110, 170)):
     s = Image.new("RGBA", spr.size, col + (255,)); s.putalpha(spr.getchannel("A")); return s
 
+def mancha(d, c, r, W, base):
+    """Mancha de pintura redondeada con gotitas y carita sonriente."""
+    dark = tuple(int(v * 0.78) for v in base); light = tuple(int(v + (255 - v) * 0.5) for v in base)
+    rn = random.Random(7)
+    blobs = [(0, 0, 0.82)] + [(0.78 * math.cos(math.radians(a)), 0.78 * math.sin(math.radians(a)), 0.30 + 0.06 * (k % 2))
+                              for k, a in enumerate(range(0, 360, 40))]
+    drops = [(1.18, -0.55, 0.11), (-1.2, 0.35, 0.09), (0.55, 1.18, 0.1), (-0.75, -1.05, 0.08)]
+    for col, grow in ((dark, 0.045), (base, 0.0)):
+        for (x, y, rr) in blobs + drops:
+            R = r * (rr + grow); d.ellipse([c + r * x - R, c + r * y - R, c + r * x + R, c + r * y + R], fill=col)
+    d.ellipse([c - r * 0.55, c - r * 0.62, c - r * 0.2, c - r * 0.35], fill=light + (220,))
+    _eyes(d, c, c - r * 0.05, r * 0.9)
+    d.arc([c - r * 0.3, c + r * 0.05, c + r * 0.3, c + r * 0.45], 20, 160, fill=COL["dark"], width=int(W * 0.02))
+    _cheeks(d, c, c + r * 0.2, r * 0.9)
+
 def obj_sprite(kind, size=220, color=None, gray=False, face=False):
     S = 4; W = size * S; im = Image.new("RGBA", (W, W), (0, 0, 0, 0)); d = ImageDraw.Draw(im)
     c = W / 2; r = W * 0.36
@@ -609,6 +624,15 @@ def obj_sprite(kind, size=220, color=None, gray=False, face=False):
         letter_draw(im, kind[2:], W, K)
     elif kind in VOWEL_OBJS:
         vowel_obj_draw(im, d, kind, c, r, W, K)
+    elif kind.startswith("M_"):   # mancha de pintura con carita: M_red, M_blue, M_white...
+        cn = kind[2:]; base = (205, 205, 215) if gray else (color or (COL[cn] if cn != "white" else (250, 250, 252)))
+        mancha(d, c, r, W, base[:3])
+    elif kind == "gota":
+        col = C("blue")
+        d.polygon([(c, c - r * 1.25), (c + r * 0.62, c + r * 0.05), (c - r * 0.62, c + r * 0.05)], fill=col)
+        d.ellipse([c - r * 0.78, c - r * 0.45, c + r * 0.78, c + r * 1.1], fill=col)
+        d.ellipse([c - r * 0.45, c - r * 0.2, c - r * 0.18, c + r * 0.25], fill=(255, 255, 255, 170))
+        _eyes(d, c + r * 0.05, c + r * 0.35, r * 0.75); d.arc([c - r * 0.22, c + r * 0.45, c + r * 0.32, c + r * 0.85], 20, 160, fill=COL["dark"], width=int(W * 0.018))
     elif kind == "cohete":
         d.polygon([(c, c - r * 1.4), (c - r * 0.45, c - r * 0.5), (c + r * 0.45, c - r * 0.5)], fill=COL["red"])
         d.rounded_rectangle([c - r * 0.45, c - r * 0.6, c + r * 0.45, c + r * 0.9], radius=int(r * 0.2), fill=(240, 240, 248))
@@ -831,7 +855,7 @@ def draw_frame(L, scen, t):
     im = scen.frame(t, night); d = ImageDraw.Draw(im)
     who, env = speaking(t)
     danc = 1.0 if (kind == "dance" and b["dancing"] and t >= b["dancing"]) or kind in ("title", "end") else 0.0
-    if kind in ("review", "sreview", "freview", "bowl", "lreview", "review20") and b["confetti"] and t >= b["confetti"]: danc = 1.0
+    if kind in ("review", "sreview", "freview", "bowl", "lreview", "review20", "rainbow") and b["confetti"] and t >= b["confetti"]: danc = 1.0
     # ----- contenido -----
     if kind == "title" or kind == "end":
         txt1, txt2 = TITLE if kind == "title" else ("¡HASTA LA", "PRÓXIMA!")
@@ -1374,9 +1398,92 @@ def draw_frame(L, scen, t):
             if L.v:
                 if q_on(b, t): qmark(d, L, t)   # el título del Short ya dice "¿CUÁL ES DIFERENTE?"
             else: outlined(d, (L.W / 2 + 30, yy - 10), "¿CUÁL ES DIFERENTE?", font(84), COL["yellow"], sw=10)
+    elif kind == "paint":  # color nuevo: ("scene", "paint", "M_red", "ROJO", "red") + qmark + reveal (nombre)
+        mk, lab, cn = b["args"][0], b["args"][1], b["args"][2]
+        cx = (L.stage[0] + L.stage[2]) / 2; cy = (L.stage[1] + L.stage[3]) / 2 + (50 if not L.v else 80)
+        sz = 470 if not L.v else 640; tc = COL[cn] if cn in COL else (255, 255, 255)
+        if bt < 0.55:   # gotas que caen antes del ¡splash!
+            for k in range(3):
+                yy = cy - 520 + (bt / 0.55) ** 2 * 520 + k * 60; rr = 30 - k * 7
+                d.ellipse([cx - rr, yy - rr * 1.3, cx + rr, yy + rr], fill=tc)
+        else:
+            st = bt - 0.55
+            paste_c(im, sprite(mk, sz), cx, cy + math.sin(t * 2.5) * 6, elastic(st / 0.5) * (1 + 0.04 * math.sin(t * 3.5)), math.sin(t * 2) * 3)
+            if st < 0.8:
+                for k in range(12):
+                    a = math.radians(k * 30 + 10); rr = sz * 0.35 + st * 420; s2 = 22 * (1 - st / 0.8)
+                    x, y = cx + rr * math.cos(a), cy + rr * math.sin(a) * 0.8
+                    d.ellipse([x - s2, y - s2, x + s2, y + s2], fill=tc)
+        if q_on(b, t): qmark(d, L, t)
+        elif b["reveal"] is not None and t >= b["reveal"]:
+            banner(d, L, lab, t - b["reveal"], size=140, col=tc)
+    elif kind == "colorw":  # cosas de un color: ("scene", "colorw", "ROJO", "red", [(objeto, color|None, "NOMBRE")...]) + pop i
+        lab, cn, items = b["args"][0], b["args"][1], b["args"][2]; n = len(items); tc = COL[cn]
+        size = 270 if not L.v else 300
+        box = (L.stage[0] + 20, L.stage[1] + 70, L.stage[2] - 20, L.stage[3] - 10) if not L.v else (L.stage[0], L.stage[1] + 40, L.stage[2], L.stage[3] + 120)
+        pos = grid_positions(n, box, size)
+        outlined(d, (L.W / 2 + 20, L.num_c[1] - 10), lab, font(110 * elastic(bt / 0.6) + 1), tc, sw=11)
+        shown = dict(b["pops"]); mk = "M_" + cn
+        for i, (x, y) in enumerate(pos, 1):
+            ok, oc, nm = items[i - 1]
+            if i in shown and t >= shown[i]:
+                tt = t - shown[i]; wob = math.sin(t * 2.5 + i) * 5
+                paste_c(im, sprite(ok, size, tuple(oc) if oc else None), x, y + wob, elastic(tt / 0.45), math.sin(t * 2 + i) * 3)
+                if tt > 0.3: outlined(d, (x, y + size * 0.58), nm, font(44 if len(nm) <= 9 else 36), (255, 255, 255), sw=7)
+            elif bt > 0.5:
+                paste_c(im, sprite(mk, int(size * 0.5)), x, y, 1.0, 0, alpha=0.35)
+    elif kind == "mix":  # mezcla: ("scene", "mix", cA, cB, cR, "NARANJA") + sa + sb + qmark + reveal
+        ca, cb, cr, lab = b["args"][0], b["args"][1], b["args"][2], b["args"][3]
+        cy = (L.stage[1] + L.stage[3]) / 2 + (60 if not L.v else 0); sz = 250 if not L.v else 300
+        if not L.v: xa, xp, xb, xe, xr = 600, 775, 950, 1110, 1280
+        else: xa, xp, xb, xe, xr = 300, 540, 780, 540, 540
+        ya = yb = cy; yr = cy if not L.v else cy + 420; ye = cy if not L.v else cy + 210
+        outlined(d, (L.W / 2 + 20, L.num_c[1] - 10), "¡MAGIA DE COLORES!", font(90 if not L.v else 70), COL["purple"], sw=10)
+        rev = b["reveal"] is not None and t >= b["reveal"]
+        for key, x, y, cn in (("sa", xa, ya, ca), ("sb", xb, yb, cb)):
+            if b[key] is not None and t >= b[key]:
+                tt = t - b[key]
+                if True:
+                    paste_c(im, sprite("M_" + cn, sz), x, y + math.sin(t * 3 + x) * 6, elastic(tt / 0.5), math.sin(t * 2 + x) * 4)
+        if b["sb"] is not None and t >= b["sb"]:
+            outlined(d, (xp, ye if L.v else cy), "+", font(130), (255, 255, 255), sw=10)
+            outlined(d, (xe, ye if not L.v else ye), "=", font(130), (255, 255, 255), sw=10)
+            if not rev:
+                h = sz * 0.36
+                d.rounded_rectangle([xr - h, yr - h, xr + h, yr + h], radius=int(h * 0.3), fill=(215, 215, 228), outline=(255, 255, 255), width=8)
+                outlined(d, (xr, yr + math.sin(t * 6) * 6), "?", font(h * 1.4), (255, 255, 255), sw=6)
+        if rev:
+            rt = t - b["reveal"]
+            if rt > 0.4:
+                paste_c(im, sprite("M_" + cr, int(sz * 1.15)), xr, yr + math.sin(t * 3) * 6, elastic((rt - 0.4) / 0.5))
+                if rt < 1.6:
+                    for k in range(10):
+                        a = k * 36 + rt * 90; r2 = sz * 0.5 + (rt - 0.4) * 230
+                        d.polygon(star_pts(xr + r2 * math.cos(math.radians(a)), yr + r2 * math.sin(math.radians(a)), 22 * (1.6 - rt), 9 * (1.6 - rt)), fill=RAINBOW[k])
+                if not L.v: outlined(d, (xr, yr + sz * 0.72), lab, font(64 * elastic((rt - 0.5) / 0.5) + 1), COL[cr], sw=9)
+                else: banner(d, L, lab, rt - 0.5, y=yr + sz * 0.8, size=90, col=COL[cr])
+    elif kind == "rainbow":  # arcoíris por bandas: ("scene", "rainbow", [(color, "NOMBRE")...]) + rpop i + confetti
+        items = b["args"][0]; n = len(items)
+        cx = L.W / 2 + 110 if not L.v else L.W / 2; cy = L.H * (0.72 if not L.v else 0.62); R0 = 380 if not L.v else 450; bw = 46 if not L.v else 52
+        last = None
+        for i, tt in b["rpops"]:
+            if t < tt: continue
+            last = (i, tt); cn = items[i - 1][0]; R = R0 - (i - 1) * bw; p = ease((t - tt) / 0.7)
+            d.arc([cx - R, cy - R, cx + R, cy + R], 180, 180 + 180 * p, fill=COL[cn], width=bw + 2)
+        if last and last[0] == n and t - last[1] > 0.7:
+            for sx in (-1, 1):
+                x = cx + sx * (R0 - n * bw / 2); y = cy + 10
+                for (dx, dy, rr) in ((-70, 0, 70), (0, -35, 85), (70, 0, 70), (0, 25, 70)):
+                    d.ellipse([x + dx - rr, y + dy - rr, x + dx + rr, y + dy + rr], fill=(250, 250, 255))
+        if last:
+            i, tt = last; cn, nm = items[i - 1]
+            outlined(d, (L.W / 2 + 20, L.num_c[1] - 10), nm, font(120 * elastic((t - tt) / 0.4) + 1), COL[cn], sw=11)
+        else:
+            banner(d, L, "¡EL ARCOÍRIS!", bt, y=L.num_c[1] - 10, size=120, col=COL["yellow"])
+        if b["confetti"] and t >= b["confetti"]: confetti(d, L, t - b["confetti"])
     elif kind == "bye":
         banner(d, L, "¡ADIÓS!", bt, size=160, col=COL["orange"])
-    if kind in ("card", "size", "bye", "animal", "fruit", "bowl", "word", "letter", "shape", "spattern", "teens", "odd") and b["confetti"] and t >= b["confetti"]: confetti(d, L, t - b["confetti"])
+    if kind in ("card", "size", "bye", "animal", "fruit", "bowl", "word", "letter", "shape", "spattern", "teens", "odd", "paint", "colorw", "mix") and b["confetti"] and t >= b["confetti"]: confetti(d, L, t - b["confetti"])
     # ----- personajes -----
     tw = env if who == "tula" else 0.0; pw_ = env if who == "pipo" else 0.0
     tsp = draw_tula(t, tw, danc); psp = draw_pipo(t, pw_, danc)
