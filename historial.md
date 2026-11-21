@@ -31,3 +31,4 @@ fecha · canal · título · ID de YouTube
 2026-11-19 · Pulso IA · auto · largo · Clonaban la voz del jefe con IA: así se habrían llevado 129 millones de dólares · SeZQLFR__ho
 2026-11-20 · Peque Planeta · auto · short · ¿Cuál es diferente? 🔍 ¡Encuentra el diferente con Tula y Pipo! #shorts · nr2Y6lhz4TU
 2026-11-20 · Pulso IA · auto · short · Anthropic salió a la bolsa: récord de 80.000 millones… y aun así pierde dinero #shorts · xl6MkzzlDns
+2026-11-21 · Peque Planeta · auto · largo · ¡Aprendemos los colores con Tula y Pipo! 🎨 Rojo, azul, amarillo y más | Para niños · fUDakIDhM0c
