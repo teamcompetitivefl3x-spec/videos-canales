@@ -1374,7 +1374,7 @@ def draw_frame(L, scen, t):
         if L.v:
             sz = 300; pos = [(L.W / 2 + (-200 if k % 2 == 0 else 200), 700 + (k // 2) * 330) for k in range(n)]
         else:
-            sz = 240; pos = [(L.W / 2 + 20 + (k - (n - 1) / 2) * 250, 470) for k in range(n)]
+            sz = 240 if n <= 4 else 220; sp = 250 if n <= 4 else 205; pos = [(L.W / 2 + (20 if n <= 4 else -20) + (k - (n - 1) / 2) * sp, 470) for k in range(n)]
         for k, (ok, oc, osc) in enumerate(items):
             x, y = pos[k]; y += math.sin(t * 3 + k) * 7; tt = bt - 0.2 - k * 0.18
             if tt < 0: continue
