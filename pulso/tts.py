@@ -13,6 +13,10 @@ GAP_SECT = 1.10   # pausa entre secciones
 
 # Pronunciación para el TTS (el texto en pantalla no cambia)
 PRON = [
+    (r"\bGPT-6\.2\b", "yi pi ti seis punto dos"), (r"\bMuse\b", "Miús"), (r"\bVera Rubin\b", "Vera Rúbin"), (r"\bHopper\b", "Jóper"),
+    (r"\bCodex\b", "Códex"), (r"\bAPI\b", "a pe i"), (r"\bRob Bonta\b", "Rob Bónta"), (r"\bBonta\b", "Bónta"), (r"\bRubyGems\b", "Rúbi Yems"),
+    (r"\bWikimedia\b", "Uikimédia"), (r"\bWikipedia\b", "Uikipédia"), (r"\bhackearon\b", "jaquearon"), (r"\bhardware\b", "járduer"),
+    (r"\bPolitico\b", "Polítiko"),
     (r"\bMalbear Labs\b", "Málbear Labs"), (r"\bDeepSeek Flash\b", "Dip Sik Flash"), (r"\bARTEX\b", "Ártex"), (r"\bHexstrike\b", "Jéks estráik"),
     (r"\bPentAGI\b", "Pent ei yi ai"), (r"\bkernels\b", "kérnels"), (r"\bMI355X\b", "eme i tres cincuenta y cinco equis"), (r"\bAMD\b", "a eme dé"),
     (r"\bMythos\b", "Mítos"), (r"\bROBOTERA\b", "Robotéra"), (r"\bShenzhen\b", "Shenyén"), (r"\bDongguan\b", "Dongguán"),
