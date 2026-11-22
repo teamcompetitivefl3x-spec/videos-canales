@@ -63,6 +63,9 @@ PRON = [
     (r"1,8 billones", "uno coma ocho billones"), (r"\b83 dólares", "ochenta y tres dólares"), (r"34 %", "treinta y cuatro por ciento"),
     (r"17 %", "diecisiete por ciento"), (r"80\.000 millones", "ochenta mil millones"), (r"33\.000 millones", "treinta y tres mil millones"),
     (r"1\.300 millones", "mil trescientos millones"), (r"\bNasdaq\b", "Násdak"), (r"\bSpaceX\b", "Spéis Ex"), (r"\bprospecto\b", "prospecto"),
+    (r"\bMeredith Whittaker\b", "Méredith Uítaker"), (r"\bWhittaker\b", "Uítaker"), (r"\bSignal\b", "Sígnal"),
+    (r"\bRecall\b", "Ricól"), (r"\biPhone\b", "áifon"), (r"\bAndroid\b", "Ándroid"), (r"\bWindows\b", "Uíndous"),
+    (r"\bSiri\b", "Síri"), (r"\b20 de noviembre\b", "veinte de noviembre"),
     (r"«|»|\"", ""),
 ]
 
