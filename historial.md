@@ -33,3 +33,4 @@ fecha · canal · título · ID de YouTube
 2026-11-20 · Pulso IA · auto · short · Anthropic salió a la bolsa: récord de 80.000 millones… y aun así pierde dinero #shorts · xl6MkzzlDns
 2026-11-21 · Peque Planeta · auto · largo · ¡Aprendemos los colores con Tula y Pipo! 🎨 Rojo, azul, amarillo y más | Para niños · fUDakIDhM0c
 2026-11-21 · Pulso IA · auto · largo · California demanda a OpenAI: dice que sus IA se descontrolaron +80 veces | 5 noticias de IA · Jb0eZ1vQTrw
+2026-11-22 · Peque Planeta · auto · short · ¿Qué número falta? 🔢 ¡Juega con los números con Tula y Pipo! #shorts · B1OOyjLMyUQ

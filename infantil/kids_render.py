@@ -921,19 +921,20 @@ def draw_frame(L, scen, t):
         banner(d, L, "¿QUÉ NÚMERO FALTA?", bt, size=110 if not L.v else 80, col=COL["purple"])
     elif kind == "missing":
         seq, miss = b["args"]; n = len(seq)
-        outlined(d, (L.W / 2 + 20, L.num_c[1] - 10), "¿QUÉ NÚMERO FALTA?", font(96 if not L.v else 70), COL["purple"], sw=10)
+        if not (L.v and SHORT_TITLE):   # en el Short el título ya hace la pregunta
+            outlined(d, (L.W / 2 + 20, L.num_c[1] - 10), "¿QUÉ NÚMERO FALTA?", font(96 if not L.v else 70), COL["purple"], sw=10)
         for k, v in enumerate(seq):
             if not L.v: x, y = L.W * (0.245 + 0.118 * k), L.H * 0.42
-            else: x, y = L.W * (0.25 + 0.5 * (k % 2)), L.H * (0.30 + 0.17 * (k // 2))
+            else: x, y = L.W * (0.27 + 0.46 * (k % 2)), L.H * (0.31 + 0.20 * (k // 2))
             tt = bt - k * 0.25
             if tt < 0: continue
             if k == miss and not (b["fill"] and t >= b["fill"]):
-                p = elastic(tt / 0.6); r = (95 if not L.v else 105) * p
+                p = elastic(tt / 0.6); r = (95 if not L.v else 135) * p
                 d.ellipse([x - r, y - r, x + r, y + r], fill=(200, 200, 215), outline=(255, 255, 255), width=10)
                 outlined(d, (x, y + math.sin(t * 6) * 6), "?", font(r * 1.3), (255, 255, 255), sw=6)
             else:
                 tt2 = (t - b["fill"]) if (k == miss) else tt
-                numeral_disc(im, d, L, v, tt2, word=False, cx=x, cy=y, r=95 if not L.v else 105)
+                numeral_disc(im, d, L, v, tt2, word=False, cx=x, cy=y, r=95 if not L.v else 135)
     elif kind == "sum_intro":
         banner(d, L, "¡A SUMAR!", bt, size=150, col=COL["green"])
     elif kind == "sum":
