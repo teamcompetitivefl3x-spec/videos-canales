@@ -36,3 +36,4 @@ fecha · canal · título · ID de YouTube
 2026-11-22 · Peque Planeta · auto · short · ¿Qué número falta? 🔢 ¡Juega con los números con Tula y Pipo! #shorts · B1OOyjLMyUQ
 2026-11-22 · Pulso IA · auto · short · Signal bloqueó las capturas de pantalla… por culpa de la IA de tu teléfono #shorts · Q-IjZoiaPRI
 2026-11-23 · Peque Planeta · auto · largo · ¡Aprendemos los opuestos con Tula y Pipo! ☀️🌙 Grande y pequeño, día y noche y más | Para niños · hGjrWvhswZ8
+2026-11-23 · Pulso IA · auto · largo · La IA te da la razón 49 % más que una persona… y eso tiene un precio · WKFWTttEsa4
