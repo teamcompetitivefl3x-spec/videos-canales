@@ -470,6 +470,212 @@ def vowel_obj_draw(im, d, kind, c, r, W, K):
         d.ellipse([c - r, c - r, c + r, c + r], fill=K(COL["purple"]), outline=(255, 255, 255), width=int(W * 0.03))
         d.text((c, c + r * 0.05), "1", font=font(r * 1.5), fill=(255, 255, 255), anchor="mm", stroke_width=int(W * 0.015), stroke_fill=K(dark))
 
+# ---------- opuestos: objetos nuevos (luna, taza, helado, auto, caracol, caritas, vasos, puertas) ----------
+OPP_SPRITES = ("luna", "taza", "helado", "auto", "caracol", "carafeliz", "caratriste", "vaso_lleno", "vaso_vacio", "puerta_a", "puerta_c")
+
+def opp_sprite_draw(d, kind, c, r, W, C, K):
+    lw = max(2, int(W * 0.014)); dk = K(COL["dark"])
+    if kind == "luna":
+        d.ellipse([c - r * 1.05, c - r * 1.05, c + r * 1.05, c + r * 1.05], fill=K((255, 226, 110)))
+        d.ellipse([c - r * 0.25, c - r * 1.35, c + r * 1.45, c + r * 0.55], fill=(0, 0, 0, 0))
+        for (x, y, rr) in ((-0.55, 0.45, 0.13), (-0.75, -0.15, 0.09), (-0.2, 0.8, 0.08)):
+            d.ellipse([c + r * x - r * rr, c + r * y - r * rr, c + r * x + r * rr, c + r * y + r * rr], fill=K((240, 200, 80)))
+        d.arc([c - r * 0.78, c - r * 0.28, c - r * 0.42, c - r * 0.02], 20, 160, fill=dk, width=lw)
+        d.arc([c - r * 0.72, c + r * 0.12, c - r * 0.32, c + r * 0.45], 20, 150, fill=dk, width=lw)
+        d.ellipse([c - r * 0.98, c - r * 0.02, c - r * 0.72, c + r * 0.16], fill=(255, 150, 170, 170))
+    elif kind == "taza":
+        d.ellipse([c - r * 1.2, c + r * 0.82, c + r * 1.0, c + r * 1.18], fill=K((250, 250, 255)), outline=K((200, 205, 220)), width=lw)
+        d.ellipse([c + r * 0.25, c - r * 0.2, c + r * 1.1, c + r * 0.7], outline=C("red"), width=int(r * 0.17))
+        d.rounded_rectangle([c - r * 0.95, c - r * 0.45, c + r * 0.55, c + r * 0.98], radius=int(r * 0.3), fill=C("red"))
+        d.ellipse([c - r * 0.95, c - r * 0.62, c + r * 0.55, c - r * 0.25], fill=C("red"))
+        d.ellipse([c - r * 0.85, c - r * 0.55, c + r * 0.45, c - r * 0.32], fill=K((120, 70, 40)))
+        heart(d, c - r * 0.2, c + r * 0.3, r * 0.32, K((255, 255, 255)))
+    elif kind == "helado":
+        d.polygon([(c - r * 0.6, c + r * 0.05), (c + r * 0.6, c + r * 0.05), (c, c + r * 1.45)], fill=K((228, 172, 100)))
+        def _edge(sd, f): return (c + sd * r * 0.6 * (1 - f), c + r * 0.05 + r * 1.4 * f)
+        for f in (0.0, 0.2, 0.4):
+            for sd in (-1, 1):
+                d.line([_edge(sd, f), _edge(-sd, f + 0.35)], fill=K((196, 135, 70)), width=lw)
+        d.ellipse([c - r * 0.55, c - r * 1.2, c + r * 0.55, c - r * 0.2], fill=K((170, 225, 250)))
+        d.ellipse([c - r * 0.72, c - r * 0.58, c + r * 0.72, c + r * 0.3], fill=C("pink"))
+        for x in (-0.5, -0.1, 0.35):
+            d.ellipse([c + r * x - r * 0.12, c + r * 0.1, c + r * x + r * 0.12, c + r * 0.42], fill=C("pink"))
+        d.ellipse([c - r * 0.14, c - r * 1.42, c + r * 0.14, c - r * 1.14], fill=K((230, 45, 60)))
+        _eyes(d, c, c - r * 0.2, r * 0.9, dx=0.28, s=0.13)
+        d.arc([c - r * 0.2, c - r * 0.12, c + r * 0.2, c + r * 0.15], 20, 160, fill=dk, width=lw)
+    elif kind == "auto":
+        d.rounded_rectangle([c - r * 1.25, c - r * 0.15, c + r * 1.25, c + r * 0.6], radius=int(r * 0.25), fill=C("red"))
+        d.polygon([(c - r * 0.75, c - r * 0.12), (c - r * 0.5, c - r * 0.72), (c + r * 0.4, c - r * 0.72), (c + r * 0.75, c - r * 0.12)], fill=C("red"))
+        d.polygon([(c - r * 0.6, c - r * 0.16), (c - r * 0.43, c - r * 0.6), (c - r * 0.07, c - r * 0.6), (c - r * 0.07, c - r * 0.16)], fill=K((170, 225, 250)))
+        d.polygon([(c + r * 0.03, c - r * 0.16), (c + r * 0.03, c - r * 0.6), (c + r * 0.36, c - r * 0.6), (c + r * 0.6, c - r * 0.16)], fill=K((170, 225, 250)))
+        d.ellipse([c + r * 1.0, c - r * 0.02, c + r * 1.22, c + r * 0.2], fill=K((255, 230, 90)))
+        d.rectangle([c - r * 1.25, c + r * 0.12, c + r * 1.25, c + r * 0.2], fill=K((255, 255, 255)))
+        for x in (-0.68, 0.68):
+            d.ellipse([c + r * x - r * 0.33, c + r * 0.28, c + r * x + r * 0.33, c + r * 0.94], fill=dk)
+            d.ellipse([c + r * x - r * 0.14, c + r * 0.47, c + r * x + r * 0.14, c + r * 0.75], fill=K((200, 200, 210)))
+    elif kind == "caracol":
+        body = K((255, 205, 120)); dbody = K((225, 160, 80))
+        d.rounded_rectangle([c - r * 1.3, c + r * 0.5, c + r * 1.0, c + r * 0.95], radius=int(r * 0.22), fill=body, outline=dbody, width=lw)
+        d.ellipse([c + r * 0.5, c - r * 0.25, c + r * 1.2, c + r * 0.9], fill=body, outline=dbody, width=lw)
+        for (x0, x1) in ((0.7, 0.62), (1.02, 1.16)):
+            d.line([(c + r * x0, c - r * 0.05), (c + r * x1, c - r * 0.62)], fill=dbody, width=int(lw * 1.6))
+            d.ellipse([c + r * x1 - r * 0.12, c - r * 0.76, c + r * x1 + r * 0.12, c - r * 0.52], fill=(255, 255, 255), outline=dk, width=lw)
+            d.ellipse([c + r * x1 - r * 0.05, c - r * 0.68, c + r * x1 + r * 0.07, c - r * 0.56], fill=dk)
+        d.arc([c + r * 0.72, c + r * 0.2, c + r * 1.05, c + r * 0.5], 20, 160, fill=dk, width=lw)
+        d.ellipse([c - r * 1.05, c - r * 0.7, c + r * 0.55, c + r * 0.85], fill=C("purple"), outline=K((120, 70, 190)), width=lw)
+        sx, sy = c - r * 0.25, c + r * 0.08
+        pts = [(sx + r * 0.68 * (1 - a / (5.2 * math.pi)) * math.cos(a), sy + r * 0.68 * (1 - a / (5.2 * math.pi)) * math.sin(a)) for a in [i * 0.15 for i in range(int(5 * math.pi / 0.15))]]
+        d.line(pts, fill=K((215, 185, 250)), width=int(lw * 1.5), joint="curve")
+    elif kind in ("carafeliz", "caratriste"):
+        happy = kind == "carafeliz"
+        d.ellipse([c - r * 1.1, c - r * 1.1, c + r * 1.1, c + r * 1.1], fill=K((255, 214, 70)), outline=K((235, 170, 40)), width=lw)
+        _eyes(d, c, c - r * 0.25, r * 1.1, dx=0.32, s=0.15)
+        if happy:
+            d.chord([c - r * 0.55, c - r * 0.1, c + r * 0.55, c + r * 0.75], 0, 180, fill=K((150, 40, 55)))
+            d.ellipse([c - r * 0.25, c + r * 0.45, c + r * 0.25, c + r * 0.72], fill=K((255, 120, 140)))
+            _cheeks(d, c, c + r * 0.2, r * 1.1, dx=0.62)
+        else:
+            d.arc([c - r * 0.42, c + r * 0.38, c + r * 0.42, c + r * 0.95], 200, 340, fill=dk, width=int(lw * 1.6))
+            for sx_ in (-1, 1):
+                d.line([(c + sx_ * r * 0.18, c - r * 0.62), (c + sx_ * r * 0.55, c - r * 0.5)], fill=dk, width=int(lw * 1.4))
+    elif kind in ("vaso_lleno", "vaso_vacio"):
+        top, bot = c - r * 1.1, c + r * 1.15; tw, bw = r * 0.8, r * 0.6
+        d.polygon([(c - tw, top), (c + tw, top), (c + bw, bot), (c - bw, bot)], fill=(225, 242, 255, 110))
+        if kind == "vaso_lleno":
+            wl = top + r * 0.3; k_ = (wl - top) / (bot - top); ww = tw - (tw - bw) * k_
+            d.polygon([(c - ww, wl), (c + ww, wl), (c + bw, bot), (c - bw, bot)], fill=C("blue"))
+            d.ellipse([c - ww, wl - r * 0.1, c + ww, wl + r * 0.1], fill=K((120, 175, 250)))
+        d.line([(c - tw, top), (c - bw, bot), (c + bw, bot), (c + tw, top)], fill=K((150, 180, 210)), width=int(lw * 1.6), joint="curve")
+        d.ellipse([c - tw, top - r * 0.1, c + tw, top + r * 0.1], outline=K((150, 180, 210)), width=lw)
+        d.line([(c - tw * 0.7, top + r * 0.35), (c - bw * 0.72, bot - r * 0.25)], fill=(255, 255, 255, 200), width=int(lw * 1.8))
+    elif kind in ("puerta_a", "puerta_c"):
+        x0, x1, y0, y1 = c - r * 0.75, c + r * 0.75, c - r * 1.3, c + r * 1.3
+        d.rectangle([x0 - r * 0.14, y0 - r * 0.14, x1 + r * 0.14, y1], fill=K((255, 255, 255)))
+        if kind == "puerta_c":
+            d.rectangle([x0, y0, x1, y1], fill=K((175, 105, 55)))
+            for (a, b_) in ((0.12, 0.45), (0.55, 0.9)):
+                d.rectangle([x0 + r * 0.18, y0 + (y1 - y0) * a, x1 - r * 0.18, y0 + (y1 - y0) * b_], outline=K((140, 80, 40)), width=lw)
+            d.ellipse([x1 - r * 0.38, c - r * 0.05, x1 - r * 0.14, c + r * 0.19], fill=K((255, 211, 51)))
+        else:
+            d.rectangle([x0, y0, x1, y1], fill=K((70, 50, 95)))
+            d.rectangle([x0, y1 - r * 0.25, x1, y1], fill=K((235, 190, 110)))
+            d.polygon([(x0, y0), (x0 + r * 0.55, y0 - r * 0.18), (x0 + r * 0.55, y1 + r * 0.15), (x0, y1)], fill=K((175, 105, 55)))
+            d.ellipse([x0 + r * 0.34, c, x0 + r * 0.5, c + r * 0.2], fill=K((255, 211, 51)))
+
+# paneles de opuestos: clave -> (fondo A, fondo B, función que dibuja el lado)
+OPP_BG = {"tam": ((200, 235, 255), (200, 235, 255)), "pos": ((190, 228, 255), (190, 228, 255)),
+          "dia": ((130, 205, 250), (40, 45, 110)), "vaso": ((255, 244, 205), (255, 244, 205)),
+          "puerta": ((255, 220, 230), (255, 220, 230)), "temp": ((255, 215, 190), (210, 236, 255)),
+          "vel": ((215, 245, 205), (215, 245, 205)), "cara": ((255, 240, 185), (205, 222, 252))}
+_pbg = {}
+def opp_panel(key, side, t, P):
+    """Cuadro P x P (RGBA) con el lado A o B del opuesto, animado."""
+    ck = (key, side, P)
+    if ck not in _pbg:
+        S = 3; Q = P * S; im = Image.new("RGBA", (Q, Q), (0, 0, 0, 0)); d = ImageDraw.Draw(im)
+        bg = OPP_BG[key][0 if side == "A" else 1]
+        d.rectangle([0, 0, Q, Q], fill=bg)
+        if key in ("pos", "dia", "vel"):
+            gcol = (110, 190, 80) if not (key == "dia" and side == "B") else (40, 95, 60)
+            d.ellipse([-Q * 0.3, Q * 0.74, Q * 1.3, Q * 1.6], fill=gcol)
+        if key == "vel": d.rectangle([0, Q * 0.8, Q, Q * 0.92], fill=(150, 150, 165)); [d.rectangle([x, Q * 0.855, x + Q * 0.08, Q * 0.865], fill=(255, 255, 255)) for x in np.arange(0, Q, Q * 0.16)]
+        if key == "puerta":
+            for yy in np.arange(Q * 0.12, Q, Q * 0.12): d.line([(0, yy), (Q, yy)], fill=(250, 200, 215), width=S * 2)
+        mask = Image.new("L", (Q, Q), 0); ImageDraw.Draw(mask).rounded_rectangle([0, 0, Q - 1, Q - 1], radius=int(Q * 0.09), fill=255)
+        _pbg[ck] = (im.resize((P, P), Image.LANCZOS), mask.resize((P, P), Image.LANCZOS))
+    base, mask = _pbg[ck]; im = base.copy(); d = ImageDraw.Draw(im); h = P / 2
+    if key == "tam":
+        if side == "A": paste_c(im, sprite("pelota", int(P * 0.92)), h, h + 8 + math.sin(t * 2.5) * 5, 1.0, math.sin(t * 2) * 4)
+        else: paste_c(im, sprite("pelota", int(P * 0.3)), h, P * 0.68 + math.sin(t * 2.5) * 3, 1.0, math.sin(t * 2) * 4)
+    elif key == "pos":
+        if side == "A":
+            y = P * 0.24 + math.sin(t * 3) * 10; paste_c(im, sprite("pelota", int(P * 0.32)), h, y, 1.0, t * 40)
+            for k in range(3): d.line([(h - 40 + k * 40, y + 75), (h - 40 + k * 40, y + 120)], fill=(255, 255, 255), width=6)
+        else:
+            sq = 1 + 0.04 * abs(math.sin(t * 3)); paste_c(im, sprite("pelota", int(P * 0.32)), h, P * 0.74, sq)
+    elif key == "dia":
+        if side == "A":
+            paste_c(im, sprite("sol", int(P * 0.5)), P * 0.66, P * 0.32, 1.0, t * 20)
+            paste_c(im, sprite("nube", int(P * 0.42)), P * 0.28 + math.sin(t * 0.8) * 12, P * 0.5)
+        else:
+            rn = random.Random(11)
+            for k in range(14):
+                x, y = rn.uniform(0.06, 0.94) * P, rn.uniform(0.06, 0.62) * P; s = (7 + 5 * rn.random()) * (0.7 + 0.3 * math.sin(t * 4 + k))
+                d.polygon(star_pts(x, y, s * 1.6, s * 0.6), fill=(255, 240, 150))
+            paste_c(im, sprite("luna", int(P * 0.5)), P * 0.6, P * 0.36, 1.0, math.sin(t * 1.5) * 5)
+    elif key == "vaso":
+        paste_c(im, sprite("vaso_lleno" if side == "A" else "vaso_vacio", int(P * 0.82)), h, h + 15)
+        if side == "A":
+            for k in range(5):
+                ph = (t * 0.45 + k / 5) % 1; x = h + (k - 2) * 26 + math.sin(t * 3 + k) * 6; y = P * 0.78 - ph * P * 0.42; rr = 6 + k % 3 * 2
+                d.ellipse([x - rr, y - rr, x + rr, y + rr], outline=(255, 255, 255, 220), width=3)
+    elif key == "puerta":
+        paste_c(im, sprite("puerta_a" if side == "A" else "puerta_c", int(P * 0.9)), h, h + 22)
+    elif key == "temp":
+        if side == "A":
+            paste_c(im, sprite("taza", int(P * 0.72)), h, P * 0.64)
+            for k in range(3):
+                x0 = h - 50 + k * 40
+                for j in range(3):
+                    ph = (t * 0.6 + j / 3 + k * 0.17) % 1; yb = P * 0.36 - ph * P * 0.3; a = int(230 * math.sin(ph * math.pi))
+                    pts = [(x0 + math.sin((yy / 14) + t * 3 + k) * 9, yb - yy) for yy in range(0, 50, 5)]
+                    d.line(pts, fill=(255, 255, 255, a), width=7, joint="curve")
+        else:
+            paste_c(im, sprite("helado", int(P * 0.78)), h, h + 12, 1.0, math.sin(t * 2) * 3)
+            rn = random.Random(5)
+            for k in range(12):
+                x = rn.uniform(0.05, 0.95) * P + math.sin(t * 1.5 + k) * 10; y = ((rn.random() + t * 0.12) % 1) * P; s = 7 + 4 * rn.random()
+                for a in range(3):
+                    ang = math.radians(a * 60 + t * 40)
+                    d.line([(x - s * math.cos(ang), y - s * math.sin(ang)), (x + s * math.cos(ang), y + s * math.sin(ang))], fill=(255, 255, 255, 230), width=3)
+    elif key == "vel":
+        if side == "A":
+            ph = (t * 0.7) % 1; x = -P * 0.35 + ph * P * 1.7; y = P * 0.68 + math.sin(t * 25) * 2
+            for k in range(4): d.line([(x - 120 - k * 18, y - 40 + k * 22), (x - 70 - k * 18, y - 40 + k * 22)], fill=(255, 255, 255), width=6)
+            paste_c(im, sprite("auto", int(P * 0.5)), x, y)
+        else:
+            x = P * 0.42 + math.sin(t * 0.25) * P * 0.12
+            paste_c(im, sprite("caracol", int(P * 0.55)), x, P * 0.66 + math.sin(t * 1.2) * 2)
+    elif key == "cara":
+        paste_c(im, sprite("carafeliz" if side == "A" else "caratriste", int(P * 0.85)), h, h + 5 + (math.sin(t * 4) * 6 if side == "A" else 0),
+                1.0 + (0.03 * math.sin(t * 5) if side == "A" else 0))
+        if side == "B":
+            for k, sx_ in enumerate((-1, 1)):
+                ph = (t * 0.5 + k * 0.5) % 1; x = h + sx_ * P * 0.15; y = P * 0.44 + ph * P * 0.28; rr = 11
+                d.polygon([(x, y - rr * 1.8), (x + rr, y), (x - rr, y)], fill=(110, 180, 250, int(255 * (1 - ph))))
+                d.ellipse([x - rr, y - rr, x + rr, y + rr], fill=(110, 180, 250, int(255 * (1 - ph))))
+    a = np.minimum(np.asarray(im.getchannel("A")), np.asarray(mask)); im.putalpha(Image.fromarray(a))
+    return im
+
+def opp_card(im, d, panel, cx, cy, P, scale=1.0, alpha=1.0, glow=False):
+    if scale <= 0.02: return
+    s = P * scale / 2
+    d.rounded_rectangle([cx - s + 8, cy - s + 12, cx + s + 8, cy + s + 12], radius=int(P * 0.1 * scale), fill=(40, 40, 60, int(70 * alpha)))
+    if glow:
+        g = s + 14 + 5 * math.sin(cx + cy)
+        d.rounded_rectangle([cx - g, cy - g, cx + g, cy + g], radius=int(P * 0.12 * scale), outline=COL["yellow"], width=12)
+    d.rounded_rectangle([cx - s - 9, cy - s - 9, cx + s + 9, cy + s + 9], radius=int(P * 0.1 * scale), fill=(255, 255, 255))
+    paste_c(im, panel, cx, cy, scale, 0, alpha=alpha)
+
+def opp_q_card(d, cx, cy, P, scale, t):
+    if scale <= 0.02: return
+    s = P * scale / 2
+    d.rounded_rectangle([cx - s + 8, cy - s + 12, cx + s + 8, cy + s + 12], radius=int(P * 0.1 * scale), fill=(40, 40, 60, 70))
+    d.rounded_rectangle([cx - s - 9, cy - s - 9, cx + s + 9, cy + s + 9], radius=int(P * 0.1 * scale), fill=(210, 210, 226), outline=(255, 255, 255), width=10)
+    outlined(d, (cx, cy + math.sin(t * 6) * 8), "?", font(P * 0.6 * scale), (255, 255, 255), sw=max(1, int(10 * scale)))
+
+def sparkle(d, x, y, rt, base, dur=1.2):
+    if rt >= dur: return
+    for j in range(10):
+        a = j * 36 + rt * 90; r2 = base + rt * 230
+        d.polygon(star_pts(x + r2 * math.cos(math.radians(a)), y + r2 * math.sin(math.radians(a)), 22 * (dur - rt), 9 * (dur - rt)), fill=RAINBOW[j])
+
+def two_arrow(d, cx, cy, w, col):
+    h = w * 0.28
+    d.polygon([(cx - w / 2, cy), (cx - w / 2 + h * 1.2, cy - h * 1.3), (cx - w / 2 + h * 1.2, cy - h * 0.5), (cx + w / 2 - h * 1.2, cy - h * 0.5),
+               (cx + w / 2 - h * 1.2, cy - h * 1.3), (cx + w / 2, cy), (cx + w / 2 - h * 1.2, cy + h * 1.3), (cx + w / 2 - h * 1.2, cy + h * 0.5),
+               (cx - w / 2 + h * 1.2, cy + h * 0.5), (cx - w / 2 + h * 1.2, cy + h * 1.3)], fill=col, outline=COL["dark"], width=5)
+
 def silhouette(spr, col=(120, 110, 170)):
     s = Image.new("RGBA", spr.size, col + (255,)); s.putalpha(spr.getchannel("A")); return s
 
@@ -639,6 +845,8 @@ def obj_sprite(kind, size=220, color=None, gray=False, face=False):
         d.ellipse([c - r * 0.22, c - r * 0.3, c + r * 0.22, c + r * 0.14], fill=COL["cyan"], outline=COL["blue"], width=int(W * 0.015))
         d.polygon([(c - r * 0.45, c + r * 0.3), (c - r * 0.85, c + r * 1.0), (c - r * 0.45, c + r * 0.9)], fill=COL["red"])
         d.polygon([(c + r * 0.45, c + r * 0.3), (c + r * 0.85, c + r * 1.0), (c + r * 0.45, c + r * 0.9)], fill=COL["red"])
+    elif kind in OPP_SPRITES:
+        opp_sprite_draw(d, kind, c, r, W, C, K)
     return im.resize((size, size), Image.LANCZOS)
 
 KIND = {n: OBJS[n][0] for n in OBJS}
@@ -856,6 +1064,8 @@ def draw_frame(L, scen, t):
     who, env = speaking(t)
     danc = 1.0 if (kind == "dance" and b["dancing"] and t >= b["dancing"]) or kind in ("title", "end") else 0.0
     if kind in ("review", "sreview", "freview", "bowl", "lreview", "review20", "rainbow") and b["confetti"] and t >= b["confetti"]: danc = 1.0
+    if kind == "cmd" and b["rpops"] and t >= b["rpops"][0][1]: danc = 0.6
+    if kind == "oreview" and b["confetti"] and t >= b["confetti"]: danc = 1.0
     # ----- contenido -----
     if kind == "title" or kind == "end":
         txt1, txt2 = TITLE if kind == "title" else ("¡HASTA LA", "PRÓXIMA!")
@@ -1481,6 +1691,81 @@ def draw_frame(L, scen, t):
             outlined(d, (L.W / 2 + 20, L.num_c[1] - 10), nm, font(120 * elastic((t - tt) / 0.4) + 1), COL[cn], sw=11)
         else:
             banner(d, L, "¡EL ARCOÍRIS!", bt, y=L.num_c[1] - 10, size=120, col=COL["yellow"])
+        if b["confetti"] and t >= b["confetti"]: confetti(d, L, t - b["confetti"])
+    elif kind == "opp":  # opuestos: ("scene", "opp", clave, "A", "B", colorA, colorB) + sa (nombre A) + qmark + sb (aparece B)
+        key, la, lb, ca, cb = b["args"][:5]
+        P = 400 if not L.v else 430
+        if not L.v: (xa, ya), (xb, yb) = (780, 440), (1250, 440)
+        else: (xa, ya), (xb, yb) = (540, 760), (540, 1290)
+        opp_card(im, d, opp_panel(key, "A", t, P), xa, ya + math.sin(t * 2) * 4, P, elastic(bt / 0.6))
+        sbt = b["sb"]
+        if sbt is not None and t >= sbt:
+            rt = t - sbt
+            opp_card(im, d, opp_panel(key, "B", t, P), xb, yb + math.sin(t * 2 + 1) * 4, P, 0.85 + 0.15 * elastic(rt / 0.5))
+            sparkle(d, xb, yb, rt, P * 0.45)
+            outlined(d, (xb, yb + P / 2 + 52), lb, font((66 if len(lb) <= 7 else 58) * elastic((rt - 0.2) / 0.5) + 1), COL[cb], sw=9)
+            if not L.v and rt > 0.4: two_arrow(d, (xa + xb) / 2, ya, 92 * elastic((rt - 0.4) / 0.5) + 1, COL["yellow"])
+            if rt > 0.9: banner(d, L, f"{la} Y {lb}", rt - 0.9, y=L.num_c[1] - 10, size=96 if len(la + lb) <= 13 else 80, col=(255, 255, 255))
+        elif b["sa"] is not None and t >= b["sa"] + 0.6:
+            opp_q_card(d, xb, yb, P, elastic((t - b["sa"] - 0.6) / 0.5), t)
+        if b["sa"] is not None and t >= b["sa"]:
+            outlined(d, (xa, ya + P / 2 + 52), la, font((66 if len(la) <= 7 else 58) * elastic((t - b["sa"]) / 0.5) + 1), COL[ca], sw=9)
+        if q_on(b, t): qmark(d, L, t)
+    elif kind == "opp1":  # ¿cómo está?: ("scene", "opp1", clave, "A"|"B", "¡TEXTO!", color, "¿PREGUNTA?") + qmark + reveal
+        key, side, lab, cn, hdr = b["args"][:5]
+        P = 470 if not L.v else 640
+        cx = (L.stage[0] + L.stage[2]) / 2; cy = (L.stage[1] + L.stage[3]) / 2 + (40 if not L.v else 90)
+        rev = b["reveal"] is not None and t >= b["reveal"]
+        sc = elastic(bt / 0.6) * (1 + (0.05 * math.sin(t * 5) * math.exp(-(t - b["reveal"]) * 0.5) if rev else 0))
+        opp_card(im, d, opp_panel(key, side, t, P), cx, cy + math.sin(t * 2) * 4, P, sc, glow=rev)
+        if rev:
+            rt = t - b["reveal"]; sparkle(d, cx, cy, rt, P * 0.5)
+            banner(d, L, lab, rt, y=L.num_c[1] - 10, size=120 if len(lab) <= 9 else 100, col=COL[cn])
+        elif bt > 0.4:
+            outlined(d, (L.W / 2 + 20, L.num_c[1] - 10 + math.sin(t * 5) * 6), hdr, font(92 if not L.v else 72), COL["yellow"], sw=10)
+    elif kind == "cmd":  # juego con el cuerpo: ("scene", "cmd", [("¡ARRIBA!", color, "up"|"down"|None)...]) + rpop i + confetti
+        items = b["args"][0]; last = None
+        for i, tt in b["rpops"]:
+            if tt <= t: last = (i, tt)
+        if last is None:
+            banner(d, L, "¡MUÉVETE!", bt, y=L.H * 0.36, size=150, col=COL["pink"])
+        else:
+            i, tt = last; txt, cn, ic = items[i - 1]; rt = t - tt
+            cy = L.H * (0.40 if not L.v else 0.36)
+            if ic == "up": cy -= ease(rt / 0.8) * 90
+            if ic == "down": cy += ease(rt / 0.8) * 110
+            p = elastic(rt / 0.6); f = font((160 if not L.v else 130) * p + 1)
+            outlined(d, (L.W / 2 - 10, cy + math.sin(t * 6) * 8), txt, f, COL[cn], sw=max(1, int(14 * p)))
+            if ic in ("up", "down") and rt > 0.3:
+                ax = L.W / 2 - 10; sgn = -1 if ic == "up" else 1; ay = cy + sgn * 170 + math.sin(t * 7) * 10 * sgn
+                d.polygon([(ax, ay + sgn * 70), (ax - 70, ay), (ax - 28, ay), (ax - 28, ay - sgn * 60), (ax + 28, ay - sgn * 60), (ax + 28, ay), (ax + 70, ay)],
+                          fill=COL[cn], outline=COL["dark"], width=6)
+            for k, (tx, cn2, _) in enumerate(items):
+                x = L.W / 2 + 20 + (k - (len(items) - 1) / 2) * 70; y = L.H * (0.08 if not L.v else 0.06)
+                done = any(j == k + 1 and tj <= t for j, tj in b["rpops"])
+                d.ellipse([x - 20, y - 20, x + 20, y + 20], fill=COL[cn2] if done else (255, 255, 255, 150), outline=(255, 255, 255), width=4)
+        if b["confetti"] and t >= b["confetti"]: confetti(d, L, t - b["confetti"])
+    elif kind == "oreview":  # repaso de opuestos: ("scene", "oreview", [(clave, "A", "B")...]) + rpop i (A) + pop i (B) + confetti
+        items = b["args"][0]; last = None
+        for i, tt in b["rpops"]:
+            if tt <= t: last = (i, tt)
+        if last is None:
+            banner(d, L, "¡REPASO!", bt, y=L.H * 0.36, size=150, col=COL["yellow"])
+        else:
+            i, tt = last; key, la, lb = items[i - 1]; P = 360
+            (xa, ya), (xb, yb) = ((720, 440), (1200, 440)) if not L.v else ((540, 760), (540, 1240))
+            rt = t - tt
+            opp_card(im, d, opp_panel(key, "A", t, P), xa, ya, P, elastic(rt / 0.5))
+            outlined(d, (xa, ya + P / 2 + 48), la, font(60 * elastic((rt - 0.1) / 0.5) + 1), COL["yellow"], sw=9)
+            pb = next((tj for j, tj in b["pops"] if j == i), None)
+            if pb is not None and t >= pb:
+                rb = t - pb
+                opp_card(im, d, opp_panel(key, "B", t, P), xb, yb, P, elastic(rb / 0.5))
+                outlined(d, (xb, yb + P / 2 + 48), lb, font(60 * elastic((rb - 0.1) / 0.5) + 1), COL["cyan"], sw=9)
+                if not L.v: two_arrow(d, (xa + xb) / 2, ya, 90 * elastic(rb / 0.5) + 1, COL["yellow"])
+            for k in range(len(items)):
+                x = L.W / 2 + 20 + (k - (len(items) - 1) / 2) * 64; y = L.num_c[1] - 40
+                d.ellipse([x - 18, y - 18, x + 18, y + 18], fill=RAINBOW[k] if k < i else (255, 255, 255, 150), outline=(255, 255, 255), width=4)
         if b["confetti"] and t >= b["confetti"]: confetti(d, L, t - b["confetti"])
     elif kind == "bye":
         banner(d, L, "¡ADIÓS!", bt, size=160, col=COL["orange"])
