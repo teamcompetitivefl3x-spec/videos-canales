@@ -37,3 +37,4 @@ fecha · canal · título · ID de YouTube
 2026-11-22 · Pulso IA · auto · short · Signal bloqueó las capturas de pantalla… por culpa de la IA de tu teléfono #shorts · Q-IjZoiaPRI
 2026-11-23 · Peque Planeta · auto · largo · ¡Aprendemos los opuestos con Tula y Pipo! ☀️🌙 Grande y pequeño, día y noche y más | Para niños · hGjrWvhswZ8
 2026-11-23 · Pulso IA · auto · largo · La IA te da la razón 49 % más que una persona… y eso tiene un precio · WKFWTttEsa4
+2026-11-25 · Peque Planeta · auto · largo · ¡Contamos de 2 en 2 con Tula y Pipo! 🧦 Pares, saltos y juegos hasta el 20 | Para niños · HnOyx0QDGJM

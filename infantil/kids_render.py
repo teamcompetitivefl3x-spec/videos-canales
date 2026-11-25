@@ -845,6 +845,43 @@ def obj_sprite(kind, size=220, color=None, gray=False, face=False):
         d.ellipse([c - r * 0.22, c - r * 0.3, c + r * 0.22, c + r * 0.14], fill=COL["cyan"], outline=COL["blue"], width=int(W * 0.015))
         d.polygon([(c - r * 0.45, c + r * 0.3), (c - r * 0.85, c + r * 1.0), (c - r * 0.45, c + r * 0.9)], fill=COL["red"])
         d.polygon([(c + r * 0.45, c + r * 0.3), (c + r * 0.85, c + r * 1.0), (c + r * 0.45, c + r * 0.9)], fill=COL["red"])
+    elif kind == "calcetin":   # calcetín (de a pares)
+        col = C("red"); lt = (255, 255, 255, 255) if not gray else (235, 235, 240)
+        d.rounded_rectangle([c - r * 0.62, c - r * 1.1, c + r * 0.12, c + r * 0.5], radius=int(r * 0.22), fill=col)
+        d.rounded_rectangle([c - r * 0.62, c + r * 0.02, c + r * 1.1, c + r * 0.78], radius=int(r * 0.38), fill=col)
+        d.pieslice([c + r * 0.55, c + r * 0.02, c + r * 1.1, c + r * 0.78], -90, 90, fill=lt)
+        d.pieslice([c - r * 0.62, c + r * 0.02, c - r * 0.02, c + r * 0.78], 90, 180, fill=lt)
+        for yy in (-0.55, -0.25):
+            d.rectangle([c - r * 0.62, c + r * yy, c + r * 0.12, c + r * (yy + 0.13)], fill=lt)
+        d.rounded_rectangle([c - r * 0.7, c - r * 1.22, c + r * 0.2, c - r * 0.88], radius=int(r * 0.12), fill=lt)
+    elif kind == "guante":   # guante de lana (mitón)
+        col = C("blue"); lt = (255, 255, 255) if not gray else (235, 235, 240)
+        d.ellipse([c - r * 1.02, c - r * 0.42, c - r * 0.38, c + r * 0.22], fill=col)
+        d.rounded_rectangle([c - r * 0.62, c - r * 1.1, c + r * 0.62, c + r * 0.7], radius=int(r * 0.6), fill=col)
+        heart(d, c, c - r * 0.25, r * 0.28, lt)
+        d.rounded_rectangle([c - r * 0.7, c + r * 0.55, c + r * 0.7, c + r * 1.15], radius=int(r * 0.14), fill=lt)
+        for k in range(5):
+            x = c - r * 0.5 + k * r * 0.25
+            d.line([(x, c + r * 0.62), (x, c + r * 1.08)], fill=K((210, 210, 225)), width=max(2, int(W * 0.012)))
+    elif kind == "zapato":   # zapatilla de lado
+        col = C("green"); lt = (255, 255, 255) if not gray else (235, 235, 240)
+        d.rounded_rectangle([c - r * 1.12, c + r * 0.45, c + r * 1.18, c + r * 0.8], radius=int(r * 0.16), fill=lt)
+        d.rounded_rectangle([c - r * 1.05, c - r * 0.45, c + r * 0.15, c + r * 0.55], radius=int(r * 0.25), fill=col)
+        d.ellipse([c - r * 0.5, c - r * 0.1, c + r * 1.18, c + r * 0.62], fill=col)
+        d.pieslice([c + r * 0.5, c - r * 0.1, c + r * 1.18, c + r * 0.62], -70, 90, fill=lt)
+        d.ellipse([c - r * 0.95, c - r * 0.6, c - r * 0.1, c - r * 0.3], fill=K((70, 60, 80)))
+        for k in range(3):
+            x = c - r * 0.05 + k * r * 0.2
+            d.line([(x - r * 0.12, c - r * 0.25 + k * r * 0.1), (x + r * 0.12, c - r * 0.05 + k * r * 0.1)], fill=lt, width=max(2, int(W * 0.02)))
+        d.rectangle([c - r * 1.0, c + r * 0.1, c - r * 0.6, c + r * 0.2], fill=lt)
+    elif kind == "cereza":   # par de cerezas
+        col = C("red"); stem = K((90, 150, 50))
+        d.line([(c - r * 0.5, c + r * 0.2), (c + r * 0.15, c - r * 0.95)], fill=stem, width=max(2, int(W * 0.028)))
+        d.line([(c + r * 0.55, c + r * 0.3), (c + r * 0.15, c - r * 0.95)], fill=stem, width=max(2, int(W * 0.028)))
+        _leaf(d, K, c + r * 0.5, c - r * 0.95, r * 0.42, r * 0.2, -25)
+        for (x, y) in ((-0.5, 0.58), (0.55, 0.66)):
+            d.ellipse([c + r * x - r * 0.48, c + r * y - r * 0.46, c + r * x + r * 0.48, c + r * y + r * 0.46], fill=col)
+            d.ellipse([c + r * (x - 0.28), c + r * (y - 0.28), c + r * (x - 0.08), c + r * (y - 0.08)], fill=(255, 255, 255, 200) if not gray else (240, 240, 245))
     elif kind in OPP_SPRITES:
         opp_sprite_draw(d, kind, c, r, W, C, K)
     return im.resize((size, size), Image.LANCZOS)
@@ -1063,7 +1100,7 @@ def draw_frame(L, scen, t):
     im = scen.frame(t, night); d = ImageDraw.Draw(im)
     who, env = speaking(t)
     danc = 1.0 if (kind == "dance" and b["dancing"] and t >= b["dancing"]) or kind in ("title", "end") else 0.0
-    if kind in ("review", "sreview", "freview", "bowl", "lreview", "review20", "rainbow") and b["confetti"] and t >= b["confetti"]: danc = 1.0
+    if kind in ("review", "sreview", "freview", "bowl", "lreview", "review20", "rainbow", "hop") and b["confetti"] and t >= b["confetti"]: danc = 1.0
     if kind == "cmd" and b["rpops"] and t >= b["rpops"][0][1]: danc = 0.6
     if kind == "oreview" and b["confetti"] and t >= b["confetti"]: danc = 1.0
     # ----- contenido -----
@@ -1767,6 +1804,133 @@ def draw_frame(L, scen, t):
                 x = L.W / 2 + 20 + (k - (len(items) - 1) / 2) * 64; y = L.num_c[1] - 40
                 d.ellipse([x - 18, y - 18, x + 18, y + 18], fill=RAINBOW[k] if k < i else (255, 255, 255, 150), outline=(255, 255, 255), width=4)
         if b["confetti"] and t >= b["confetti"]: confetti(d, L, t - b["confetti"])
+    elif kind == "pairs":   # contar de 2 en 2: ("scene", "pairs", npares, objeto, multicolor) + pop k (par k) | popall + numeral + qmark
+        npr, ok, multi = b["args"][0], b["args"][1], b["args"][2]
+        rows = 1 if npr <= 3 else 2; cols = math.ceil(npr / rows)
+        x0, y0, x1, y1 = (470, 230, 1450, 800) if not L.v else (60, 560, 1020, 1250)
+        tw, th = (x1 - x0) / cols, (y1 - y0) / rows
+        objl = ok if isinstance(ok, list) else None   # lista: un objeto por bandeja (p. ej. animales = un par de ojos)
+        single = ok == "cereza" or objl is not None
+        if npr == 1: tw = min(tw, 560); th = min(th, 420)
+        sz = int(min(tw * (0.8 if single else 0.56), th * 0.7, 260 if single else 270))
+        if b["popall"]: shown = {k: b["popall"] + 0.18 * (k - 1) for k in range(1, npr + 1)}
+        else: shown = {k: tt for k, tt in b["pops"]}
+        last = 0
+        for k in range(1, npr + 1):
+            r_, c_ = divmod(k - 1, cols); cnt = cols if r_ < rows - 1 else npr - cols * (rows - 1)
+            cx = x0 + (cols - cnt) * tw / 2 + c_ * tw + tw / 2; cy = y0 + r_ * th + th / 2 + 10
+            p = elastic((bt - 0.1 - 0.05 * k) / 0.5)
+            if p > 0:   # bandejita del par
+                w2, h2 = tw * 0.46 * p, min(th * 0.44, sz * 0.78) * p
+                d.rounded_rectangle([cx - w2 + 5, cy - h2 + 8, cx + w2 + 5, cy + h2 + 8], radius=int(24 * p) + 1, fill=(70, 130, 70))
+                d.rounded_rectangle([cx - w2, cy - h2, cx + w2, cy + h2], radius=int(24 * p) + 1, fill=(255, 250, 232), outline=COL["dark"], width=5)
+            col = RAINBOW[(k - 1) % 10] if multi else None
+            spr = sprite(objl[k - 1] if objl else ok, sz, col)
+            xs = [cx] if single else [cx - sz * 0.42, cx + sz * 0.42]
+            if k not in shown or t < shown[k]:
+                if not b["popall"] and bt > 0.7 and p > 0.95:
+                    for j, x in enumerate(xs): paste_c(im, spr, x, cy, 0.85, 0, alpha=0.3)
+                continue
+            tt = t - shown[k]; last = max(last, k)
+            for j, x in enumerate(xs):
+                sc = elastic((tt - 0.12 * j) / 0.45)
+                paste_c(im, spr, x, cy + math.sin(t * 2.6 + k + j) * 4, sc, math.sin(t * 2 + k + j) * 5 * (1 if j else -1))
+            if tt < 0.9 and not b["popall"]:
+                for j in range(8):
+                    a = math.radians(j * 45 + tt * 120); rr = sz * 0.5 + tt * sz * 1.1
+                    d.polygon(star_pts(cx + rr * math.cos(a), cy + rr * math.sin(a), 15 * (1 - tt) + 1, 6 * (1 - tt) + 1), fill=RAINBOW[j])
+            if not b["popall"] or (b["numeral"] and t >= b["numeral"][1]):
+                badge(d, cx + tw * 0.40, cy - min(th * 0.44, sz * 0.78) + 6, str(2 * k), r=int(36 * min(1, elastic(tt / 0.45))) + 1, col=COL["yellow"])
+        if q_on(b, t): qmark(d, L, t)
+        if b["numeral"] and t >= b["numeral"][1]:
+            nt = t - b["numeral"][1]; nn = b["numeral"][0]
+            numeral_disc(im, d, L, nn, nt, word=False, cx=L.num_c[0] - 150, r=95)
+            if nt > 0.25: outlined(d, (L.num_c[0] - 30, L.num_c[1] + 4), WORDS[nn].upper(), font(90 * elastic((nt - 0.25) / 0.4) + 1), RAINBOW[(nn - 1) % 10], sw=10, anchor="lm")
+        elif last and not b["popall"]:
+            lt = shown[last]
+            outlined(d, (L.num_c[0], L.num_c[1] - 10), str(2 * last), font(130 * elastic((t - lt) / 0.4) + 1), RAINBOW[(last - 1) % 10], sw=12)
+    elif kind == "hop":   # la rana salta de 2 en 2: ("scene", "hop", N) + rpop v (cae en v) + confetti
+        N = b["args"][0]
+        per = 10 if not L.v else 5; rows = math.ceil(N / per)
+        def spot(v):
+            if v == 0: return ((500, 470 if N <= 10 else 380) if not L.v else (130, 640))
+            r_, c_ = divmod(v - 1, per)
+            if not L.v: return (610 + c_ * 92, (470 if N <= 10 else 380 + r_ * 230))
+            return (230 + c_ * 170, 640 + r_ * 200)
+        # río
+        for r_ in range(rows):
+            y = spot(1 + r_ * per)[1]
+            d.rounded_rectangle([spot(0)[0] - 70 if r_ == 0 else spot(1)[0] - 70, y - 48, spot(min(N, (r_ + 1) * per))[0] + 70, y + 58], radius=50, fill=(90, 170, 240))
+            for k in range(6):
+                xx = spot(1 + r_ * per)[0] + ((t * 40 + k * 160) % (per * 92)) - 40
+                d.arc([xx - 30, y + 14, xx + 30, y + 40], 200, 340, fill=(200, 235, 255), width=5)
+        landed = [(v, tt) for v, tt in b["rpops"] if tt <= t]
+        lv = {v: tt for v, tt in landed}
+        sx_, sy_ = spot(0); d.ellipse([sx_ - 52, sy_ - 22, sx_ + 52, sy_ + 34], fill=(150, 100, 60)); outlined(d, (sx_, sy_ + 4), "0", font(40), (255, 255, 255), sw=5)
+        for v in range(1, N + 1):
+            x, y = spot(v); even = v % 2 == 0
+            on = v in lv
+            rr = (44 if even else 36) * (1 + (0.15 * elastic((t - lv[v]) / 0.5) if on else 0))
+            fill = RAINBOW[(v // 2 - 1) % 10] if (on and even) else ((120, 200, 100) if even else (150, 205, 135))
+            d.ellipse([x - rr, y - rr * 0.62, x + rr, y + rr * 0.62], fill=fill, outline=(60, 120, 60), width=4)
+            outlined(d, (x, y + 2), str(v), font(int(rr * (0.95 if even else 0.7))), (255, 255, 255) if even else (235, 245, 230), sw=5 if even else 3)
+        # rana
+        fr = 150 if not L.v else 170
+        if landed:
+            v, tt = landed[-1]; prev = landed[-2][0] if len(landed) > 1 else 0
+            if v - prev > 2 or v < prev: prev = max(0, v - 2)
+            jt = clamp((t - tt + 0.42) / 0.42)   # el salto termina al decir el número
+            (ax, ay), (bx, by) = spot(prev), spot(v)
+            fx = ax + (bx - ax) * jt; fy = ay + (by - ay) * jt - math.sin(math.pi * jt) * 150 - 55
+            sq = 1 + 0.12 * math.sin(math.pi * jt)
+        else:
+            fx, fy = spot(0); fy -= 55 + abs(math.sin(t * 3)) * 12; sq = 1
+        # el salto empieza un poco antes del evento: mira el próximo rpop
+        nxt = [(v, tt) for v, tt in b["rpops"] if tt > t]
+        if nxt and nxt[0][1] - t < 0.42:
+            v, tt = nxt[0]; prev = landed[-1][0] if landed else 0
+            if v - prev > 2 or v < prev: prev = max(0, v - 2)
+            jt = clamp(1 - (tt - t) / 0.42); sq = 1 + 0.12 * math.sin(math.pi * jt)
+            (ax, ay), (bx, by) = spot(prev), spot(v)
+            fx = ax + (bx - ax) * jt; fy = ay + (by - ay) * jt - math.sin(math.pi * jt) * 150 - 55
+        paste_c(im, sprite("rana", fr), fx, fy, sq)
+        if landed:
+            v, tt = landed[-1]
+            if v % 2 == 0:
+                outlined(d, (L.num_c[0], L.num_c[1] - 10), WORDS[v].upper(), font(110 * elastic((t - tt) / 0.4) + 1), RAINBOW[(v // 2 - 1) % 10], sw=11)
+        else:
+            banner(d, L, "¡DE 2 EN 2!", bt, y=L.num_c[1] - 10, size=120, col=COL["yellow"])
+        if b["confetti"] and t >= b["confetti"]: confetti(d, L, t - b["confetti"])
+    elif kind == "match":   # ¿cuál es su pareja?: ("scene", "match", objeto, color, [colores], correcta, "TEXTO") + qmark + reveal
+        ok, tc, opts, ci, lab = b["args"][:5]
+        rev = b["reveal"] is not None and t >= b["reveal"]
+        tx, ty = (680, 480) if not L.v else (540, 700)
+        fr = 300 if not L.v else 340
+        d.rounded_rectangle([tx - fr * 0.75 + 6, ty - fr * 0.62 + 9, tx + fr * 0.75 + 6, ty + fr * 0.62 + 9], radius=30, fill=(70, 130, 70))
+        d.rounded_rectangle([tx - fr * 0.75, ty - fr * 0.62, tx + fr * 0.75, ty + fr * 0.62], radius=30, fill=(255, 250, 232), outline=COL["dark"], width=6)
+        p0 = elastic((bt - 0.1) / 0.5)
+        paste_c(im, sprite(ok, 210, COL[tc]), tx - fr * 0.33, ty + math.sin(t * 2.5) * 5, p0, -6)
+        if not rev:
+            d.rounded_rectangle([tx + fr * 0.33 - 85, ty - 100, tx + fr * 0.33 + 85, ty + 100], radius=26, outline=(190, 180, 160), width=6)
+            outlined(d, (tx + fr * 0.33, ty + math.sin(t * 6) * 6), "?", font(140), COL["yellow"], sw=8)
+        for k, oc in enumerate(opts):
+            if not L.v: ox, oy = 1010 + k * 170, 480 + (k % 2) * 40
+            else: ox, oy = 220 + k * 320, 1080
+            tt = bt - 0.5 - k * 0.2
+            if tt < 0: continue
+            sc = elastic(tt / 0.45) * 0.8; al = 1.0
+            if rev:
+                rt = t - b["reveal"]
+                if k == ci:
+                    m = ease(rt / 0.7); ox = ox + (tx + fr * 0.33 - ox) * m; oy = oy + (ty - oy) * m; sc = 0.8 + 0.2 * m
+                    if rt < 1.2:
+                        for j in range(10):
+                            a = math.radians(j * 36 + rt * 90); r2 = 120 + rt * 220
+                            d.polygon(star_pts(ox + r2 * math.cos(a), oy + r2 * math.sin(a), 22 * (1.2 - rt), 9 * (1.2 - rt)), fill=RAINBOW[j])
+                else: al = max(0.25, 1 - rt * 1.5)
+            paste_c(im, sprite(ok, 210, COL[oc]), ox, oy + math.sin(t * 3 + k) * 6, sc, 6 if (rev and k == ci) else math.sin(t * 2 + k) * 6, alpha=al)
+        if rev: banner(d, L, lab, t - b["reveal"], y=L.num_c[1] - 10, size=96 if len(lab) <= 16 else 80, col=COL[tc] if tc not in ("yellow",) else COL["orange"])
+        elif bt > 0.5: outlined(d, (L.W / 2 + 30, L.num_c[1] - 10 + math.sin(t * 5) * 6), "¿CUÁL ES SU PAREJA?", font(84 if not L.v else 66), COL["yellow"], sw=10)
     elif kind == "bye":
         banner(d, L, "¡ADIÓS!", bt, size=160, col=COL["orange"])
     if kind in ("card", "size", "bye", "animal", "fruit", "bowl", "word", "letter", "shape", "spattern", "teens", "odd", "paint", "colorw", "mix") and b["confetti"] and t >= b["confetti"]: confetti(d, L, t - b["confetti"])
