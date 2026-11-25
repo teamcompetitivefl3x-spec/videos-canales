@@ -13,6 +13,14 @@ GAP_SECT = 1.10   # pausa entre secciones
 
 # Pronunciación para el TTS (el texto en pantalla no cambia)
 PRON = [
+    (r"\bGoogle Brain\b", "Gúgol Bréin"), (r"\bNews 5 Cleveland\b", "Nius faiv Clívland"), (r"\bAkron\b", "Ácron"), (r"\bOhio\b", "Oájio"),
+    (r"\bLeBron James\b", "Lebrón Yeims"), (r"\bLeBron\b", "Lebrón"), (r"\bBron\b", "Bron"), (r"\bNBA\b", "ene be a"),
+    (r"\bPlayVision\b", "Pléi Víshon"), (r"\bPolymarket\b", "Polimárket"), (r"\bOsmo\b", "Ósmo"), (r"\bAlex Wiltschko\b", "Álex Uílchko"),
+    (r"\bDEET\b", "dit"), (r"\bAvery Gilbert\b", "Éiveri Guílbert"), (r"\bAxios\b", "Áksios"), (r"\bJPMorgan Chase\b", "Yei Pi Mórgan Cheis"),
+    (r"\bMorgan Stanley\b", "Mórgan Stánli"), (r"\bCitigroup\b", "Síti grup"), (r"\bBank of America\b", "Bank of Amérika"),
+    (r"\bCharles Schwab\b", "Charls Shuab"), (r"\bCequence\b", "Síkuens"), (r"\bonline\b", "onláin"), (r"\bTidal\b", "Táidal"),
+    (r"\bRobert Anderson\b", "Róbert Ánderson"), (r"\bSpotify\b", "Spótifai"), (r"\bDeezer\b", "Díser"), (r"\bspam\b", "espam"),
+    (r"\bbásquetbol\b", "básquetbol"),
     (r"\bClaude 1\.3\b", "Clod uno punto tres"), (r"\bClaude 2\b", "Clod dos"), (r"\bLlama 2\b", "Lama dos"), (r"\bGPT-4o\b", "yi pi ti cuatro o"),
     (r"\bsycophancy\b", "sícofansi"), (r"\bStanford\b", "Stánford"), (r"\bReddit\b", "Rédit"), (r"\bMyra Cheng\b", "Máira Chéng"),
     (r"\bDan Jurafsky\b", "Dan Yuráfski"), (r"\bJurafsky\b", "Yuráfski"), (r"\bScience\b", "Sáiens"), (r"\binternet\b", "ínternet"),
