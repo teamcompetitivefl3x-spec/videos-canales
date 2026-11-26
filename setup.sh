@@ -10,4 +10,6 @@ cd /home/claude/models
 mkdir -p /home/claude/build /home/claude/kids
 cp -n /home/claude/videos-canales/pulso/*.py /home/claude/build/
 cp -n /home/claude/videos-canales/infantil/*.py /home/claude/kids/
+# efecto whoosh que usa pulso/audio.py
+[ -f /home/claude/build/whoosh.wav ] || (cd /home/claude/build && python3 music.py 5 /tmp/_m.wav 3 whoosh.wav >/dev/null && rm -f /tmp/_m.wav)
 echo "OK: entorno listo"

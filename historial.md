@@ -40,3 +40,4 @@ fecha · canal · título · ID de YouTube
 2026-11-25 · Peque Planeta · auto · largo · ¡Contamos de 2 en 2 con Tula y Pipo! 🧦 Pares, saltos y juegos hasta el 20 | Para niños · HnOyx0QDGJM
 2026-11-25 · Pulso IA · auto · largo · Tidal borrará 29 millones de canciones hechas con IA… y otras 4 locuras reales de la IA · qxXjQQ-9kVs
 2026-11-26 · Peque Planeta · auto · short · ¿Qué sigue? 🎈 ¡Juego de patrones con Tula y Pipo! #shorts · o9ndNhMK9ko
+2026-11-26 · Pulso IA · auto · short · Entrenaron una IA en el espacio… y SpaceX podrá lanzar 1 millón de satélites #shorts · p946EE1bgpI

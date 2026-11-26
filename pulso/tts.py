@@ -77,6 +77,9 @@ PRON = [
     (r"\bMeredith Whittaker\b", "Méredith Uítaker"), (r"\bWhittaker\b", "Uítaker"), (r"\bSignal\b", "Sígnal"),
     (r"\bRecall\b", "Ricól"), (r"\biPhone\b", "áifon"), (r"\bAndroid\b", "Ándroid"), (r"\bWindows\b", "Uíndous"),
     (r"\bSiri\b", "Síri"), (r"\b20 de noviembre\b", "veinte de noviembre"),
+    (r"\bAdaspace\b", "Ada Spéis"), (r"Qwen3-32B", "Kuén tres, treinta y dos be"), (r"\bAlibaba\b", "Alibába"), (r"\bFCC\b", "efe ce ce"),
+    (r"\bAmazon\b", "Ámason"), (r"45 minutos y 33 segundos", "cuarenta y cinco minutos y treinta y tres segundos"), (r"2\.800", "dos mil ochocientos"),
+    (r"hasta 1 millón", "hasta un millón"), (r"tiene 7 años", "tiene siete años"), (r"\bLibra\b", "Líbra"),
     (r"«|»|\"", ""),
 ]
 
