@@ -1931,6 +1931,37 @@ def draw_frame(L, scen, t):
             paste_c(im, sprite(ok, 210, COL[oc]), ox, oy + math.sin(t * 3 + k) * 6, sc, 6 if (rev and k == ci) else math.sin(t * 2 + k) * 6, alpha=al)
         if rev: banner(d, L, lab, t - b["reveal"], y=L.num_c[1] - 10, size=96 if len(lab) <= 16 else 80, col=COL[tc] if tc not in ("yellow",) else COL["orange"])
         elif bt > 0.5: outlined(d, (L.W / 2 + 30, L.num_c[1] - 10 + math.sin(t * 5) * 6), "¿CUÁL ES SU PAREJA?", font(84 if not L.v else 66), COL["yellow"], sw=10)
+    elif kind == "seq":   # ¿qué sigue? (patrones): ("scene", "seq", [(objeto, color|None)...], idx_falta, "TEXTO", color) + qmark + reveal
+        items, miss, lab, cn = b["args"][0], b["args"][1], b["args"][2], b["args"][3]; n = len(items)
+        if L.v:   # vertical: filas de 3 para que el patrón se lea en renglones
+            size = 260; xs = (L.W * 0.2, L.W * 0.5, L.W * 0.8)
+            pos = [(xs[k % 3], 680 + (k // 3) * 310) for k in range(n)]
+        else:
+            sp = min(260, 1300 / n); size = int(min(230, sp * 0.88))
+            pos = [(L.W / 2 + (k - (n - 1) / 2) * sp, (L.stage[1] + L.stage[3]) / 2 + 40) for k in range(n)]
+        rev = b["reveal"] is not None and t >= b["reveal"]
+        qt = next((tt for v, tt in b["q"] if v), None)
+        for k, ((sk, col), (x, y)) in enumerate(zip(items, pos)):
+            tt = bt - k * 0.22
+            if tt < 0: continue
+            bob = math.sin(t * 2.5 + k) * 5; sc = elastic(tt / 0.45)
+            if qt is not None and not rev and k != miss:   # "leemos" el patrón: cada objeto salta en orden
+                ph = (t - qt) - k * 0.5
+                if 0 <= ph < 0.45: sc *= 1 + 0.18 * math.sin(ph / 0.45 * math.pi)
+            if rev:   # ola de festejo al acertar
+                ph = (t - b["reveal"]) - 0.6 - k * 0.18
+                if 0 <= ph < 0.4: bob -= 30 * math.sin(ph / 0.4 * math.pi)
+            if k == miss and not rev:
+                h = size * 0.42 * elastic(tt / 0.6)
+                d.rounded_rectangle([x - h, y - h, x + h, y + h], radius=int(h * 0.25) + 1, fill=(215, 215, 228), outline=(255, 255, 255), width=8)
+                outlined(d, (x, y + math.sin(t * 6) * 6), "?", font(max(1, h * 1.4)), (255, 255, 255), sw=6)
+            else:
+                if k == miss:
+                    sc = elastic((t - b["reveal"]) / 0.45); rr = size * 0.56
+                    d.ellipse([x - rr, y - rr, x + rr, y + rr], fill=(255, 248, 210), outline=COL["yellow"], width=10)
+                paste_c(im, sprite(sk, size, color=COL[col] if col else None), x, y + bob, sc)
+        if q_on(b, t): qmark(d, L, t)
+        elif rev: banner(d, L, lab, t - b["reveal"], size=130, col=COL[cn])
     elif kind == "bye":
         banner(d, L, "¡ADIÓS!", bt, size=160, col=COL["orange"])
     if kind in ("card", "size", "bye", "animal", "fruit", "bowl", "word", "letter", "shape", "spattern", "teens", "odd", "paint", "colorw", "mix") and b["confetti"] and t >= b["confetti"]: confetti(d, L, t - b["confetti"])
