@@ -694,6 +694,103 @@ def mancha(d, c, r, W, base):
     d.arc([c - r * 0.3, c + r * 0.05, c + r * 0.3, c + r * 0.45], 20, 160, fill=COL["dark"], width=int(W * 0.02))
     _cheeks(d, c, c + r * 0.2, r * 0.9)
 
+# ---------- días de la semana ----------
+DAYS = [("LUNES", "red"), ("MARTES", "orange"), ("MIÉRCOLES", "yellow"), ("JUEVES", "green"),
+        ("VIERNES", "blue"), ("SÁBADO", "purple"), ("DOMINGO", "pink")]
+WEEK_SPRITES = ("paleta", "regadera", "tambor", "cometa", "pastel")
+
+def fit_font(text, maxw, size):
+    while size > 10 and font(size).getlength(text) > maxw: size -= 2
+    return font(size)
+
+def week_sprite_draw(d, kind, c, r, W, C, K):
+    lw = max(2, int(W * 0.014)); dk = K(COL["dark"])
+    if kind == "paleta":   # paleta de pintor con pincel
+        base = K((242, 210, 160)); edge = K((205, 160, 100))
+        d.ellipse([c - r * 1.25, c - r * 0.9, c + r * 1.15, c + r * 0.95], fill=base, outline=edge, width=lw * 2)
+        d.ellipse([c + r * 0.35, c + r * 0.2, c + r * 0.8, c + r * 0.62], fill=(0, 0, 0, 0))
+        d.arc([c + r * 0.35, c + r * 0.2, c + r * 0.8, c + r * 0.62], 0, 360, fill=edge, width=lw * 2)
+        for (x, y, cn) in ((-0.75, -0.15, "red"), (-0.4, -0.55, "yellow"), (0.1, -0.6, "blue"), (0.6, -0.3, "green"), (-0.55, 0.38, "purple"), (-0.05, 0.5, "pink")):
+            col = C("red") if cn == "red" else K(COL[cn])
+            d.ellipse([c + r * (x - 0.22), c + r * (y - 0.19), c + r * (x + 0.22), c + r * (y + 0.19)], fill=col)
+        # pincel en diagonal
+        d.line([(c - r * 0.1, c + r * 0.15), (c + r * 1.15, c - r * 1.15)], fill=K((150, 95, 50)), width=int(W * 0.035))
+        d.polygon([(c - r * 0.18, c + r * 0.05), (c + r * 0.0, c + r * 0.25), (c - r * 0.45, c + r * 0.55)], fill=C("red"))
+        d.line([(c - r * 0.05, c + r * 0.1), (c + r * 0.12, c - r * 0.07)], fill=K((200, 200, 210)), width=int(W * 0.045))
+    elif kind == "regadera":   # regadera
+        col = C("yellow"); dcol = tuple(max(0, v - 45) for v in col[:3])
+        d.line([(c + r * 0.55, c + r * 0.35), (c + r * 1.3, c - r * 0.55)], fill=dcol, width=int(W * 0.05))
+        d.polygon([(c + r * 1.15, c - r * 0.75), (c + r * 1.45, c - r * 0.45), (c + r * 1.35, c - r * 0.8)], fill=dcol)
+        d.arc([c - r * 0.75, c - r * 1.15, c + r * 0.45, c - r * 0.05], 180, 360, fill=dcol, width=int(W * 0.04))
+        d.rounded_rectangle([c - r * 0.95, c - r * 0.5, c + r * 0.65, c + r * 1.0], radius=int(r * 0.25), fill=col)
+        d.rectangle([c - r * 0.95, c + r * 0.05, c + r * 0.65, c + r * 0.2], fill=K((255, 255, 255)))
+        for (x, y) in ((1.5, -0.3), (1.65, 0.05), (1.4, 0.15)):
+            gx, gy = c + r * x * 0.85, c + r * y
+            d.ellipse([gx - r * 0.08, gy - r * 0.1, gx + r * 0.08, gy + r * 0.1], fill=K((90, 170, 240)))
+        _eyes(d, c - r * 0.15, c + r * 0.5, r * 0.8, dx=0.3, s=0.12)
+    elif kind == "tambor":   # tambor con palillos
+        col = C("blue"); top = K((250, 244, 226))
+        d.rectangle([c - r * 0.95, c - r * 0.35, c + r * 0.95, c + r * 0.8], fill=col)
+        d.ellipse([c - r * 0.95, c + r * 0.5, c + r * 0.95, c + r * 1.1], fill=col)
+        d.rectangle([c - r * 0.95, c + r * 0.62, c + r * 0.95, c + r * 0.78], fill=K((255, 211, 51)))
+        d.rectangle([c - r * 0.95, c - r * 0.35, c + r * 0.95, c - r * 0.2], fill=K((255, 211, 51)))
+        for k in range(5):   # cordones en zigzag
+            x0 = c - r * 0.95 + k * r * 0.38
+            d.line([(x0, c - r * 0.2), (x0 + r * 0.19, c + r * 0.62), (x0 + r * 0.38, c - r * 0.2)], fill=K((255, 255, 255)), width=lw * 2)
+        d.ellipse([c - r * 0.95, c - r * 0.65, c + r * 0.95, c - r * 0.05], fill=top, outline=K((220, 200, 160)), width=lw * 2)
+        for sx in (-1, 1):
+            d.line([(c + sx * r * 0.2, c - r * 0.45), (c + sx * r * 1.05, c - r * 1.3)], fill=K((150, 95, 50)), width=int(W * 0.03))
+            d.ellipse([c + sx * r * 1.05 - r * 0.14, c - r * 1.44, c + sx * r * 1.05 + r * 0.14, c - r * 1.16], fill=K((240, 70, 70)))
+    elif kind == "cometa":   # cometa (barrilete) con cola de moños
+        col = C("purple"); lt = tuple(int(v + (255 - v) * 0.45) for v in col[:3])
+        top, rt, bot, lf = (c - r * 0.2, c - r * 1.3), (c + r * 0.65, c - r * 0.35), (c - r * 0.2, c + r * 0.85), (c - r * 1.05, c - r * 0.35)
+        cen = (c - r * 0.2, c - r * 0.35)
+        d.polygon([top, rt, cen], fill=col); d.polygon([rt, bot, cen], fill=lt); d.polygon([bot, lf, cen], fill=col); d.polygon([lf, top, cen], fill=lt)
+        d.line([top, bot], fill=K((255, 255, 255)), width=lw); d.line([lf, rt], fill=K((255, 255, 255)), width=lw)
+        tail = [(bot[0] + math.sin(k * 1.1) * r * 0.25 + k * r * 0.18, bot[1] + k * r * 0.18) for k in range(7)]
+        d.line(tail, fill=K((90, 90, 110)), width=lw, joint="curve")
+        for k, cn in ((2, "red"), (4, "yellow"), (6, "cyan")):
+            x, y = tail[k]
+            d.polygon([(x, y), (x - r * 0.2, y - r * 0.12), (x - r * 0.2, y + r * 0.12)], fill=K(COL[cn]))
+            d.polygon([(x, y), (x + r * 0.2, y - r * 0.12), (x + r * 0.2, y + r * 0.12)], fill=K(COL[cn]))
+        _eyes(d, cen[0], cen[1] + r * 0.05, r * 0.75, dx=0.3, s=0.12)
+        d.arc([cen[0] - r * 0.18, cen[1] + r * 0.1, cen[0] + r * 0.18, cen[1] + r * 0.35], 20, 160, fill=dk, width=lw)
+    elif kind == "pastel":   # pastel de dos pisos con vela
+        col = C("pink"); lt = tuple(int(v + (255 - v) * 0.5) for v in col[:3]); wh = K((255, 255, 255))
+        d.ellipse([c - r * 1.3, c + r * 0.95, c + r * 1.3, c + r * 1.25], fill=K((225, 225, 235)))
+        d.rounded_rectangle([c - r * 1.1, c + r * 0.05, c + r * 1.1, c + r * 1.1], radius=int(r * 0.12), fill=col)
+        d.rounded_rectangle([c - r * 0.75, c - r * 0.65, c + r * 0.75, c + r * 0.12], radius=int(r * 0.12), fill=lt)
+        for (y0, x0, x1) in ((0.05, -1.1, 1.1), (-0.65, -0.75, 0.75)):
+            d.rectangle([c + r * x0, c + r * y0, c + r * x1, c + r * (y0 + 0.14)], fill=wh)
+            n = 6 if x1 > 1 else 4
+            for k in range(n):
+                x = c + r * x0 + (k + 0.5) * r * (x1 - x0) / n
+                d.ellipse([x - r * 0.12, c + r * (y0 + 0.02), x + r * 0.12, c + r * (y0 + 0.32)], fill=wh)
+        for k, cn in enumerate(("yellow", "cyan", "green", "orange", "purple")):
+            x = c - r * 0.8 + k * r * 0.4
+            d.ellipse([x - r * 0.07, c + r * 0.62, x + r * 0.07, c + r * 0.76], fill=K(COL[cn]))
+        d.rounded_rectangle([c - r * 0.08, c - r * 1.15, c + r * 0.08, c - r * 0.6], radius=int(r * 0.04), fill=K((110, 205, 250)))
+        d.polygon([(c, c - r * 1.5), (c + r * 0.13, c - r * 1.25), (c, c - r * 1.13), (c - r * 0.13, c - r * 1.25)], fill=K((255, 170, 40)))
+        d.ellipse([c - r * 0.05, c - r * 1.3, c + r * 0.05, c - r * 1.18], fill=K((255, 240, 150)))
+
+def calendar_draw(d, n, c, r, W):
+    """Hoja de calendario: n = 1..7 (día) o 0 (escondido: '?')."""
+    name, cn = DAYS[n - 1] if n else ("", None)
+    col = COL[cn] if cn else (190, 190, 205)
+    x0, y0, x1, y1 = c - r * 1.05, c - r * 1.1, c + r * 1.05, c + r * 1.25
+    d.rounded_rectangle([x0 + W * 0.015, y0 + W * 0.02, x1 + W * 0.015, y1 + W * 0.02], radius=int(r * 0.18), fill=(40, 40, 60, 90))
+    d.rounded_rectangle([x0, y0, x1, y1], radius=int(r * 0.18), fill=(255, 255, 255), outline=COL["dark"], width=int(W * 0.012))
+    d.rounded_rectangle([x0, y0, x1, y0 + r * 0.55], radius=int(r * 0.18), fill=col, outline=COL["dark"], width=int(W * 0.012))
+    d.rectangle([x0 + W * 0.006, y0 + r * 0.3, x1 - W * 0.006, y0 + r * 0.55 - W * 0.006], fill=col)
+    for sx in (-0.55, 0.55):
+        d.rounded_rectangle([c + r * sx - r * 0.09, y0 - r * 0.22, c + r * sx + r * 0.09, y0 + r * 0.2], radius=int(r * 0.08), fill=(120, 120, 140), outline=COL["dark"], width=int(W * 0.008))
+    if n:
+        d.text((c, c + r * 0.25), str(n), font=font(r * 1.15), fill=col, anchor="mm", stroke_width=int(W * 0.012), stroke_fill=COL["dark"])
+        f = fit_font(name, r * 1.85, int(r * 0.36))
+        d.text((c, c + r * 1.0), name, font=f, fill=COL["dark"], anchor="mm")
+    else:
+        d.text((c, c + r * 0.45), "?", font=font(r * 1.3), fill=(190, 190, 205), anchor="mm", stroke_width=int(W * 0.01), stroke_fill=COL["dark"])
+
 def obj_sprite(kind, size=220, color=None, gray=False, face=False):
     S = 4; W = size * S; im = Image.new("RGBA", (W, W), (0, 0, 0, 0)); d = ImageDraw.Draw(im)
     c = W / 2; r = W * 0.36
@@ -884,6 +981,10 @@ def obj_sprite(kind, size=220, color=None, gray=False, face=False):
             d.ellipse([c + r * (x - 0.28), c + r * (y - 0.28), c + r * (x - 0.08), c + r * (y - 0.08)], fill=(255, 255, 255, 200) if not gray else (240, 240, 245))
     elif kind in OPP_SPRITES:
         opp_sprite_draw(d, kind, c, r, W, C, K)
+    elif kind in WEEK_SPRITES:
+        week_sprite_draw(d, kind, c, r, W, C, K)
+    elif kind.startswith("cal_"):   # hoja de calendario: cal_1..cal_7, cal_0 = '?'
+        calendar_draw(d, int(kind[4:]), c, r, W)
     return im.resize((size, size), Image.LANCZOS)
 
 KIND = {n: OBJS[n][0] for n in OBJS}
@@ -1100,7 +1201,7 @@ def draw_frame(L, scen, t):
     im = scen.frame(t, night); d = ImageDraw.Draw(im)
     who, env = speaking(t)
     danc = 1.0 if (kind == "dance" and b["dancing"] and t >= b["dancing"]) or kind in ("title", "end") else 0.0
-    if kind in ("review", "sreview", "freview", "bowl", "lreview", "review20", "rainbow", "hop") and b["confetti"] and t >= b["confetti"]: danc = 1.0
+    if kind in ("review", "sreview", "freview", "bowl", "lreview", "review20", "rainbow", "hop", "week", "day") and b["confetti"] and t >= b["confetti"]: danc = 1.0
     if kind == "cmd" and b["rpops"] and t >= b["rpops"][0][1]: danc = 0.6
     if kind == "oreview" and b["confetti"] and t >= b["confetti"]: danc = 1.0
     # ----- contenido -----
@@ -1962,6 +2063,111 @@ def draw_frame(L, scen, t):
                 paste_c(im, sprite(sk, size, color=COL[col] if col else None), x, y + bob, sc)
         if q_on(b, t): qmark(d, L, t)
         elif rev: banner(d, L, lab, t - b["reveal"], size=130, col=COL[cn])
+    elif kind == "week":   # la semana: ("scene", "week", hasta, falta|None, "TEXTO"|None, "names"|"count"|None) + rpop i + qmark + reveal + confetti
+        upto, miss, hdr = b["args"][0], b["args"][1], b["args"][2]; mode = b["args"][3] if len(b["args"]) > 3 else None
+        cw, ch_, gap = (232, 150, 16) if not L.v else (236, 170, 12)
+        rows_y = (360, 560) if not L.v else (640, 850)
+        def wpos(k):
+            row = 0 if k < 4 else 1; n_in = 4 if row == 0 else 3; kk = k if row == 0 else k - 4
+            return (L.W / 2 + (kk - (n_in - 1) / 2) * (cw + gap), rows_y[row])
+        rp = {i: tt for i, tt in b["rpops"]}
+        rev = b["reveal"] is not None and t >= b["reveal"]
+        last = None
+        for i, tt in b["rpops"]:
+            if tt <= t: last = (i, tt)
+        for k in range(upto):
+            i = k + 1; x, y = wpos(k)
+            if rp:
+                if i not in rp or t < rp[i]: continue
+                tt = t - rp[i]
+            else: tt = bt - k * 0.16
+            if tt < 0: continue
+            sc = elastic(tt / 0.45); bob = math.sin(t * 2.5 + k) * 4
+            hi = last is not None and last[0] == i and t - last[1] < 1.6
+            if hi: sc *= 1 + 0.12 * math.sin(clamp((t - last[1]) / 0.5) * math.pi) + 0.06
+            if rev and miss:   # ola de festejo
+                ph = (t - b["reveal"]) - 0.5 - k * 0.12
+                if 0 <= ph < 0.4: bob -= 24 * math.sin(ph / 0.4 * math.pi)
+            name, cn = DAYS[k]; col = COL[cn]
+            hw, hh = cw / 2 * sc, ch_ / 2 * sc
+            if hw < 2: continue
+            hidden = (i == miss and not rev)
+            if i == miss and rev:
+                rt = t - b["reveal"]; s2 = elastic(rt / 0.45); hw, hh = cw / 2 * s2, ch_ / 2 * s2
+                if rt < 1.2:
+                    for j in range(10):
+                        a = math.radians(j * 36 + rt * 90); r2 = 90 + rt * 200
+                        d.polygon(star_pts(x + r2 * math.cos(a), y + r2 * math.sin(a), 20 * (1.2 - rt), 8 * (1.2 - rt)), fill=RAINBOW[j])
+            yy = y + bob
+            d.rounded_rectangle([x - hw + 6, yy - hh + 9, x + hw + 6, yy + hh + 9], radius=int(26 * min(1, hw / (cw / 2))) + 1, fill=(40, 40, 60, 90))
+            if hidden:
+                d.rounded_rectangle([x - hw, yy - hh, x + hw, yy + hh], radius=int(26 * sc) + 1, fill=(215, 215, 228), outline=(255, 255, 255), width=7)
+                outlined(d, (x, yy + math.sin(t * 6) * 5), "?", font(max(1, 120 * sc)), (255, 255, 255), sw=6)
+                continue
+            d.rounded_rectangle([x - hw, yy - hh, x + hw, yy + hh], radius=int(26 * hw / (cw / 2)) + 1, fill=col, outline=(255, 255, 255), width=7)
+            fs = fit_font(name, cw * 0.86, 52)
+            f = font(max(1, fs.size * hw / (cw / 2)))
+            outlined(d, (x, yy + 18 * hh / (ch_ / 2)), name, f, (255, 255, 255), sw=max(1, int(6 * hw / (cw / 2))))
+            br = 25 * hw / (cw / 2)
+            if br > 4:
+                d.ellipse([x - br, yy - hh * 0.62 - br, x + br, yy - hh * 0.62 + br], fill=(255, 255, 255), outline=COL["dark"], width=3)
+                d.text((x, yy - hh * 0.62 + 1), str(i), font=font(br * 1.3), fill=COL["dark"], anchor="mm")
+        if q_on(b, t): qmark(d, L, t)
+        elif rev and miss:
+            nm, cn = DAYS[miss - 1]; banner(d, L, "¡" + nm + "!", t - b["reveal"], y=L.num_c[1] - 5, size=120, col=COL[cn])
+        elif last is not None and mode == "names":
+            nm, cn = DAYS[last[0] - 1]
+            outlined(d, (L.W / 2, L.num_c[1] - 5), nm, font(130 * elastic((t - last[1]) / 0.4) + 1), COL[cn], sw=12)
+        elif last is not None and mode == "count":
+            outlined(d, (L.W / 2, L.num_c[1] - 5), str(last[0]), font(150 * elastic((t - last[1]) / 0.4) + 1), RAINBOW[last[0] - 1], sw=12)
+        elif hdr and bt > 0.3:
+            outlined(d, (L.W / 2, L.num_c[1] - 5 + math.sin(t * 5) * 6), hdr, fit_font(hdr, L.W - 160, 96 if not L.v else 72), COL["yellow"], sw=10)
+        if b["confetti"] and t >= b["confetti"]: confetti(d, L, t - b["confetti"])
+    elif kind == "day":   # un día: ("scene", "day", i, [sprites (o (sprite, color))], esconder) + pop k (actividad k) + qmark + reveal + confetti
+        i, objs, hide = b["args"][0], b["args"][1], (b["args"][2] if len(b["args"]) > 2 else False)
+        name, cn = DAYS[i - 1]; col = COL[cn]
+        rev = b["reveal"] is not None and t >= b["reveal"]
+        shown = (not hide) or rev
+        if not L.v: calc, csz = (720, 470), 380
+        else: calc, csz = (540, 720), 420
+        p0 = elastic(bt / 0.55)
+        if shown:
+            st = 0 if not hide else t - b["reveal"]
+            sc = p0 if not hide else (0.85 + 0.15 * elastic(st / 0.5))
+            paste_c(im, sprite(f"cal_{i}", csz), calc[0], calc[1] + math.sin(t * 2) * 5, sc, math.sin(t * 1.5) * 3)
+            if hide and st < 1.2:
+                for j in range(10):
+                    a = math.radians(j * 36 + st * 90); r2 = 170 + st * 240
+                    d.polygon(star_pts(calc[0] + r2 * math.cos(a), calc[1] + r2 * math.sin(a), 24 * (1.2 - st), 9 * (1.2 - st)), fill=RAINBOW[j])
+        else:
+            paste_c(im, sprite("cal_0", csz), calc[0], calc[1] + math.sin(t * 2) * 5, p0, math.sin(t * 1.5) * 3)
+        pops = {k: tt for k, tt in b["pops"]}
+        for k, o in enumerate(objs, 1):
+            ok, oc = (o if isinstance(o, (list, tuple)) else (o, None))
+            if not L.v:
+                x = 1170 if len(objs) == 1 else 1060 + (k - 1) * 230; y = 470 + (k - 1) * 40; sz = 320 if len(objs) == 1 else 250
+            else:
+                x = 540 + (k - (len(objs) + 1) / 2) * 300; y = 1090; sz = 280
+            if hide: tt = bt - 0.3 - k * 0.2
+            elif k in pops: tt = t - pops[k]
+            else: continue
+            if tt < 0: continue
+            paste_c(im, sprite(ok, sz, COL[oc] if oc else None), x, y + math.sin(t * 2.6 + k) * 8, elastic(tt / 0.45), math.sin(t * 2 + k) * 6)
+        # fila de la semana (bolitas) para ubicar el día
+        if not L.v:
+            for k in range(7):
+                x = 960 + (k - 3) * 70; y = 760; cur = (k + 1 == i) and shown
+                rr = 30 + (4 * math.sin(t * 5) if cur else 0) if cur else 18
+                c2 = COL[DAYS[k][1]] if (k + 1 <= i and shown) or (not hide and k + 1 <= i) else (225, 225, 235)
+                d.ellipse([x - rr, y - rr, x + rr, y + rr], fill=c2, outline=(255, 255, 255), width=5)
+                if cur: d.text((x, y + 1), str(i), font=font(rr * 1.2), fill=(255, 255, 255), anchor="mm", stroke_width=3, stroke_fill=COL["dark"])
+        if q_on(b, t): qmark(d, L, t)
+        elif shown:
+            st = bt if not hide else t - b["reveal"]
+            banner(d, L, ("¡" + name + "!") if hide else name, st, y=L.num_c[1] - 5, size=130, col=col)
+        elif bt > 0.3:
+            outlined(d, (L.W / 2, L.num_c[1] - 5 + math.sin(t * 5) * 6), "¿QUÉ DÍA ES?", font(96 if not L.v else 72), COL["yellow"], sw=10)
+        if b["confetti"] and t >= b["confetti"]: confetti(d, L, t - b["confetti"])
     elif kind == "bye":
         banner(d, L, "¡ADIÓS!", bt, size=160, col=COL["orange"])
     if kind in ("card", "size", "bye", "animal", "fruit", "bowl", "word", "letter", "shape", "spattern", "teens", "odd", "paint", "colorw", "mix") and b["confetti"] and t >= b["confetti"]: confetti(d, L, t - b["confetti"])
