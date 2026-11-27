@@ -207,6 +207,19 @@ def icon(d, kind, cx, cy, r, col=None, a=255):
         # lupa
         d.ellipse([cx - r * 0.9, cy - r * 0.9, cx + r * 0.4, cy + r * 0.4], outline=col, width=max(3, int(r * 0.2)))
         d.line([(cx + r * 0.25, cy + r * 0.25), (cx + r * 0.95, cy + r * 0.95)], fill=col, width=max(4, int(r * 0.3)))
+    elif kind == "bear":
+        # cabeza de osito de peluche con bufanda
+        for sx in (-1, 1):
+            ex, ey = cx + sx * r * 0.62, cy - r * 0.62
+            d.ellipse([ex - r * 0.33, ey - r * 0.33, ex + r * 0.33, ey + r * 0.33], fill=col)
+            d.ellipse([ex - r * 0.17, ey - r * 0.17, ex + r * 0.17, ey + r * 0.17], fill=rgba(C["dark"], a * 0.45))
+        d.ellipse([cx - r * 0.85, cy - r * 0.8, cx + r * 0.85, cy + r * 0.75], fill=col)
+        d.ellipse([cx - r * 0.38, cy + r * 0.0, cx + r * 0.38, cy + r * 0.5], fill=rgba(C["text"], a * 0.85))
+        for ex in (-0.32, 0.32):
+            d.ellipse([cx + ex * r - r * 0.1, cy - r * 0.3, cx + ex * r + r * 0.1, cy - r * 0.1], fill=dark)
+        d.ellipse([cx - r * 0.13, cy + r * 0.07, cx + r * 0.13, cy + r * 0.24], fill=dark)
+        rrect(d, (cx - r * 0.8, cy + r * 0.72, cx + r * 0.8, cy + r * 0.98), r * 0.12, rgba(C["red"], a))
+        rrect(d, (cx + r * 0.3, cy + r * 0.8, cx + r * 0.58, cy + r * 1.35), r * 0.1, rgba(C["red"], a))
     elif kind == "code":
         # </> dentro de una ventana
         rrect(d, (cx - r * 1.1, cy - r * 0.8, cx + r * 1.1, cy + r * 0.8), r * 0.22, col)

@@ -80,6 +80,12 @@ PRON = [
     (r"\bAdaspace\b", "Ada Spéis"), (r"Qwen3-32B", "Kuén tres, treinta y dos be"), (r"\bAlibaba\b", "Alibába"), (r"\bFCC\b", "efe ce ce"),
     (r"\bAmazon\b", "Ámason"), (r"45 minutos y 33 segundos", "cuarenta y cinco minutos y treinta y tres segundos"), (r"2\.800", "dos mil ochocientos"),
     (r"hasta 1 millón", "hasta un millón"), (r"tiene 7 años", "tiene siete años"), (r"\bLibra\b", "Líbra"),
+    (r"\bKumma\b", "Cúma"), (r"\bFoloToy\b", "Fólo Tói"), (r"\bPIRG\b", "Perg"), (r"\bCurio\b", "Kiúrio"), (r"\bGrok\b", "Grok"),
+    (r"\bElon Musk\b", "Ílon Mask"), (r"\bMiko 3\b", "Míko tres"), (r"\bMiko\b", "Míko"), (r"\bMistral\b", "Mistrál"), (r"\bHugo Wu\b", "Júgo Wu"),
+    (r"\bMattel\b", "Matél"), (r"\bHello Barbie\b", "Jelóu Bárbi"), (r"\bBarbie\b", "Bárbi"), (r"\bMy Friend Cayla\b", "Mái Frend Cáila"),
+    (r"\bBluetooth\b", "Blutús"), (r"\bHot Wheels\b", "Jot Uíls"), (r"\bMarsha Blackburn\b", "Másha Blákbern"), (r"\bRichard Blumenthal\b", "Ríchard Blúmental"),
+    (r"\bCommon Sense Media\b", "Cómon Sens Mídia"), (r"\bAndrew Gounardes\b", "Ándru Gunárdes"), (r"\bKathy Hochul\b", "Káthi Jókol"),
+    (r"\bGPT-4o\b", "yi pi ti cuatro o"),
     (r"«|»|\"", ""),
 ]
 

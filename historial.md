@@ -42,3 +42,4 @@ fecha · canal · título · ID de YouTube
 2026-11-26 · Peque Planeta · auto · short · ¿Qué sigue? 🎈 ¡Juego de patrones con Tula y Pipo! #shorts · o9ndNhMK9ko
 2026-11-26 · Pulso IA · auto · short · Entrenaron una IA en el espacio… y SpaceX podrá lanzar 1 millón de satélites #shorts · p946EE1bgpI
 2026-11-27 · Peque Planeta · auto · largo · ¡Los días de la semana con Tula y Pipo! 📅 Lunes, martes, miércoles y más | Para niños · N8D5p-guh_s
+2026-11-27 · Pulso IA · auto · largo · El osito con IA que explicaba dónde hay cuchillos… y Nueva York prohibió estos juguetes · oJ9XnbUnEhI
