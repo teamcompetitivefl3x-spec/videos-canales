@@ -2168,9 +2168,70 @@ def draw_frame(L, scen, t):
         elif bt > 0.3:
             outlined(d, (L.W / 2, L.num_c[1] - 5 + math.sin(t * 5) * 6), "¿QUÉ DÍA ES?", font(96 if not L.v else 72), COL["yellow"], sw=10)
         if b["confetti"] and t >= b["confetti"]: confetti(d, L, t - b["confetti"])
+    elif kind == "gone":   # ¿qué falta? (memoria): ("scene", "gone", [(objeto, color|None)...], idx_falta, "TEXTO", color) + sa (cierra el telón) + sb (abre: falta uno) + qmark + reveal
+        items, miss, lab, cn = b["args"][0], b["args"][1], b["args"][2], b["args"][3]; n = len(items)
+        if L.v:
+            size = 300
+            pos = ([(L.W / 2 - 215, 730), (L.W / 2 + 215, 730), (L.W / 2, 1040)] if n == 3 else
+                   [(L.W / 2 + (-210 if k % 2 == 0 else 210), 720 + (k // 2) * 320) for k in range(n)])
+            box = (50, 545, L.W - 50, 1215)
+        else:
+            sp = min(300, 1200 / n); size = int(min(250, sp * 0.85))
+            pos = [(L.W / 2 + 20 + (k - (n - 1) / 2) * sp, (L.stage[1] + L.stage[3]) / 2 + 50) for k in range(n)]
+            box = (L.stage[0] - 20, L.stage[1] + 60, L.stage[2] + 20, L.stage[3] + 40)
+        sa, sb = b["sa"], b["sb"]
+        opened = sb is not None and t >= sb
+        rev = b["reveal"] is not None and t >= b["reveal"]
+        for k, ((sk, col), (x, y)) in enumerate(zip(items, pos)):
+            tt = bt - 0.2 - k * 0.2
+            if tt < 0: continue
+            bob = math.sin(t * 2.5 + k) * 6; sc = elastic(tt / 0.45); rot = math.sin(t * 2 + k) * 4
+            if opened and k == miss and not rev:
+                h = size * 0.40 * elastic((t - sb) / 0.6)
+                d.rounded_rectangle([x - h, y - h, x + h, y + h], radius=int(h * 0.25) + 1, fill=(215, 215, 228), outline=(255, 255, 255), width=8)
+                outlined(d, (x, y + math.sin(t * 6) * 6), "?", font(max(1, h * 1.4)), (255, 255, 255), sw=6)
+                continue
+            if rev and k == miss:
+                rt = t - b["reveal"]; sc = elastic(rt / 0.45) * (1.08 + 0.06 * math.sin(rt * 7)); rr = size * 0.58
+                d.ellipse([x - rr, y - rr, x + rr, y + rr], fill=(255, 248, 210, 235), outline=COL["yellow"], width=12)
+                if rt < 1.2:
+                    for j in range(10):
+                        a = j * 36 + rt * 90; r2 = size * 0.55 + rt * 220
+                        d.polygon(star_pts(x + r2 * math.cos(math.radians(a)), y + r2 * math.sin(math.radians(a)), 22 * (1.2 - rt), 9 * (1.2 - rt)), fill=RAINBOW[j])
+            paste_c(im, sprite(sk, size, color=COL[col] if col else None), x, y + bob, sc, rot, alpha=0.4 if (rev and k != miss) else 1.0)
+        # telón que se cierra (ojitos cerrados) y se vuelve a abrir
+        cp = 0.0
+        if sa is not None and t >= sa:
+            cp = ease((t - sa) / 0.55) if not opened else 1 - ease((t - sb) / 0.55)
+        if cp > 0.01:
+            x0, y0, x1, y1 = box; mid = (x0 + x1) / 2; half = (x1 - x0) / 2 * cp
+            d.rounded_rectangle([x0 - 10, y0 - 34, x1 + 10, y0 + 6], radius=14, fill=(150, 30, 60), outline=COL["dark"], width=5)
+            for side in (-1, 1):
+                ex = x0 + half if side < 0 else x1 - half; a0, a1 = (x0, ex) if side < 0 else (ex, x1)
+                nf = 6; fw = (a1 - a0) / nf
+                for f in range(nf):
+                    fx = a0 + f * fw
+                    d.rectangle([fx, y0, fx + fw + 1, y1], fill=(225, 50, 80) if f % 2 == 0 else (195, 35, 65))
+                    d.ellipse([fx, y1 - fw * 0.35, fx + fw, y1 + fw * 0.35], fill=(225, 50, 80) if f % 2 == 0 else (195, 35, 65))
+                d.line([(ex, y0), (ex, y1)], fill=COL["yellow"], width=8)
+            if cp > 0.95:
+                for j in range(6):
+                    a = j * 60 + t * 60; rr = 150
+                    d.polygon(star_pts(mid + rr * math.cos(math.radians(a)), (y0 + y1) / 2 + rr * math.sin(math.radians(a)) * 0.7, 26, 10), fill=COL["yellow"])
+                f = fit_font("¡OJITOS", (x1 - x0) * 0.8, 110)
+                outlined(d, (mid, (y0 + y1) / 2 - 55), "¡OJITOS", f, (255, 255, 255), sw=10)
+                outlined(d, (mid, (y0 + y1) / 2 + 55), "CERRADOS!", fit_font("CERRADOS!", (x1 - x0) * 0.8, 110), (255, 255, 255), sw=10)
+        # textos de arriba
+        yy = L.num_c[1] + math.sin(t * 5) * 6
+        if rev: banner(d, L, lab, t - b["reveal"], size=130 if len(lab) <= 10 else 105, col=COL[cn])
+        elif q_on(b, t):
+            if L.v: qmark(d, L, t)
+            else: outlined(d, (L.W / 2 + 20, yy - 10), "¿QUÉ FALTA?", font(90), COL["yellow"], sw=10)
+        elif bt > 0.5 and (sa is None or t < sa):
+            outlined(d, (L.W / 2 + (0 if L.v else 20), yy - (0 if L.v else 10)), "¡MIRA BIEN!", font(100 if L.v else 90), (255, 255, 255), sw=10)
     elif kind == "bye":
         banner(d, L, "¡ADIÓS!", bt, size=160, col=COL["orange"])
-    if kind in ("card", "size", "bye", "animal", "fruit", "bowl", "word", "letter", "shape", "spattern", "teens", "odd", "paint", "colorw", "mix") and b["confetti"] and t >= b["confetti"]: confetti(d, L, t - b["confetti"])
+    if kind in ("card", "size", "bye", "animal", "fruit", "bowl", "word", "letter", "shape", "spattern", "teens", "odd", "paint", "colorw", "mix", "gone") and b["confetti"] and t >= b["confetti"]: confetti(d, L, t - b["confetti"])
     # ----- personajes -----
     tw = env if who == "tula" else 0.0; pw_ = env if who == "pipo" else 0.0
     tsp = draw_tula(t, tw, danc); psp = draw_pipo(t, pw_, danc)
